@@ -5,4 +5,5 @@ Distributed system supporting cemetery management made in microservices architec
 * Docker
 * Spring Boot
 * Spring REST MVC
+* Hibernate
 * PostgreSQL
