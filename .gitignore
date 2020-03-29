@@ -12,6 +12,7 @@
 
 # Reservation Module temp files
 /reservation_module/.gradle
+/reservation_module/build
 /reservation_module/target
 
 # Mobile Tools for Java (J2ME)
