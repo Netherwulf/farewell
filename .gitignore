@@ -15,6 +15,11 @@
 /reservation_module/build
 /reservation_module/target
 
+# Web Client temp files
+/web_client/build
+/web_client/node_modules
+/web_client/build
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
