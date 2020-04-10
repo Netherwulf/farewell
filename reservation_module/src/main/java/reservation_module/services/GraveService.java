@@ -4,22 +4,26 @@ import reservation_module.api.v1.model.GraveDTO;
 import reservation_module.api.v1.model.GraveListDTO;
 import reservation_module.models.Grave;
 
+import org.springframework.http.ResponseEntity;
+
 public interface GraveService {
 
     GraveListDTO getAllGraves();
 
-    GraveDTO getGraveById(Long graveId);
+    ResponseEntity getGraveById(Long graveId);
 
-    GraveDTO getGraveByFuneralId(Long funeralId);
+    ResponseEntity getGraveByFuneralId(Long funeralId);
+
+    ResponseEntity getGravesByUserId(Long userId);
 
     GraveDTO createNewGrave(GraveDTO graveDTO);
 
-    GraveDTO saveGraveByDTO(Long id, GraveDTO graveDTO);
+    ResponseEntity saveGraveByDTO(GraveDTO graveDTO);
 
-    GraveDTO patchGrave(Long id, GraveDTO graveDTO);
+    ResponseEntity patchGrave(GraveDTO graveDTO);
 
     GraveDTO saveAndReturnDTO(Grave grave);
 
-    public void deleteGraveById(Long id);
+    public ResponseEntity deleteGraveById(Long id);
 
 }

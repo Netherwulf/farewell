@@ -26,30 +26,11 @@ public class DeceasedController {
         return deceasedService.getAllDeceasedByGraveId(id);
     }
 
-
     @GetMapping("/graves/{graveId}/deceased/{deceasedId}")
     @ResponseStatus(HttpStatus.OK)
     public DeceasedDTO getByGraveIdAndDeceasedId(@PathVariable Long graveId, @PathVariable Long deceasedId) {
         return deceasedService.getByGraveIdAndDeceasedId(graveId, deceasedId);
     }
-
-//    @PostMapping("/deceased")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public DeceasedDTO createNewDeceased(@RequestBody DeceasedDTO deceasedDTO) {
-//        return deceasedService.createNewDeceased(deceasedDTO);
-//    }
-//
-//    @PutMapping("/deceased/{id}")
-//    @ResponseStatus(HttpStatus.OK)
-//    public DeceasedDTO updateDeceased(@PathVariable Long id, @RequestBody DeceasedDTO deceasedDTO) {
-//        return deceasedService.saveDeceasedByDTO(id, deceasedDTO);
-//    }
-//
-//    @PatchMapping("/deceased/{id}")
-//    @ResponseStatus(HttpStatus.OK)
-//    public DeceasedDTO patchDeceased(@PathVariable Long id, @RequestBody DeceasedDTO deceasedDTO) {
-//        return deceasedService.patchDeceased(id, deceasedDTO);
-//    }
 
     @DeleteMapping("/graves/{graveId}/deceased/{deceasedId}")
     @ResponseStatus(HttpStatus.OK)

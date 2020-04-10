@@ -14,7 +14,7 @@ public class Funeral {
     private String funeralDirectorId;
     private String userId;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.PERSIST)
     private Grave grave;
 
     public Long getId() {

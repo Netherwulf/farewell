@@ -27,5 +27,7 @@ public class GraveDTO {
 
     private Long funeralId;
 
+    private Long userId;
+
     private Set<DeceasedDTO> deceased = new HashSet<>();
 }

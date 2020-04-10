@@ -46,6 +46,7 @@ public class DummyData implements ApplicationListener<ContextRefreshedEvent> {
         graveOne.setGraveNumber("99996");
         graveOne.setCoordinates("41-24-12.2-N 2-10-26.5-E");
         graveOne.setCapacity("4");
+        graveOne.setUserId(40L);
 
         funeralOne.setGrave(graveOne);
         graveOne.setFuneral(funeralOne);
@@ -88,6 +89,7 @@ public class DummyData implements ApplicationListener<ContextRefreshedEvent> {
         graveTwo.setGraveNumber("99997");
         graveTwo.setCoordinates("17-18-19.7-S 19-59-37.4-W");
         graveTwo.setCapacity("3");
+        graveTwo.setUserId(41L);
 
         funeralTwo.setGrave(graveTwo);
         graveTwo.setFuneral(funeralTwo);
@@ -122,6 +124,7 @@ public class DummyData implements ApplicationListener<ContextRefreshedEvent> {
         graveThree.setGraveNumber("99998");
         graveThree.setCoordinates("30-22-16.0-N 3-25-27.7-W");
         graveThree.setCapacity("2");
+        graveThree.setUserId(41L);
 
         // save grave with no funeral and no deceased
         graveList.add(graveThree);

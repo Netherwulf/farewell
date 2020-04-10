@@ -15,6 +15,7 @@ public class Deceased {
     private String dateOfDeath;
     private String placeOfDeath;
 
+//    @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne(cascade = {CascadeType.ALL})
     private Grave grave;
 

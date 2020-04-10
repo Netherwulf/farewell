@@ -14,11 +14,13 @@ public class Grave {
     private String graveNumber;
     private String coordinates;
     private String capacity;
+    private Long userId;
 
-    @OneToOne(mappedBy = "grave")
+    @OneToOne(mappedBy = "grave", fetch = FetchType.LAZY)
     private Funeral funeral;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grave")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grave", orphanRemoval = true)
+//    @CascadeOnDelete
     private Set<Deceased> deceased = new HashSet<>();
 
     public Grave addDeceased(Deceased deceased) {
@@ -81,5 +83,13 @@ public class Grave {
 
     public void setDeceased(Set<Deceased> deceased) {
         this.deceased = deceased;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }
