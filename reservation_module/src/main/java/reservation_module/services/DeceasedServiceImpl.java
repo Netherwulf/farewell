@@ -2,6 +2,8 @@ package reservation_module.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import reservation_module.api.v1.mapper.DeceasedMapper;
 import reservation_module.api.v1.model.DeceasedDTO;
 import reservation_module.api.v1.model.DeceasedListDTO;
@@ -46,11 +48,11 @@ public class DeceasedServiceImpl implements DeceasedService {
     }
 
     @Override
-    public DeceasedListDTO getAllDeceasedByGraveId(Long graveId) {
+    public ResponseEntity getAllDeceasedByGraveId(Long graveId) {
         Optional<Grave> graveOptional = graveRepository.findById(graveId);
 
         if(!graveOptional.isPresent()) {
-            log.error("Grave id not found, id: " + graveId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Grave not found for id: " + graveId.toString());
         }
 
         Grave grave = graveOptional.get();
@@ -65,44 +67,31 @@ public class DeceasedServiceImpl implements DeceasedService {
                 })
                 .collect(Collectors.toList());
 
-        return new DeceasedListDTO(deceasedDTOs);
+        return ResponseEntity.status(HttpStatus.OK).body(deceasedDTOs);
     }
 
     @Override
-    public DeceasedDTO getByGraveIdAndDeceasedId(Long graveId, Long deceasedId) {
-        Optional<Grave> graveOptional = graveRepository.findById(graveId);
-
-        if(!graveOptional.isPresent()) {
-            log.error("Grave id not found, id: " + graveId);
-        }
-
-        Grave grave = graveOptional.get();
-
-        Optional<Deceased> deceasedOptional = grave
-                .getDeceased()
-                .stream()
-                .filter(deceased -> deceased.getId().equals(deceasedId))
-                .findFirst();
+    public ResponseEntity getByDeceasedId(Long deceasedId) {
+        Optional<Deceased> deceasedOptional = deceasedRepository.findById(deceasedId);
 
         if(!deceasedOptional.isPresent()) {
-            log.error("Deceased id not found, id: " + deceasedId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Deceased not found for id: " + deceasedId.toString());
         }
 
         Deceased deceased = deceasedOptional.get();
 
         DeceasedDTO deceasedDTO = deceasedMapper.deceasedToDeceasedDTO(deceased);
-        deceasedDTO.setGraveId(graveId);
+        deceasedDTO.setGraveId(deceased.getGrave().getId());
 
-        return deceasedDTO;
+        return ResponseEntity.status(HttpStatus.OK).body(deceasedDTO);
     }
 
     @Override
-    public DeceasedDTO saveAndReturnDTO(Long id, DeceasedDTO deceasedDTO) {
-        Optional<Grave> graveOptional = graveRepository.findById(id);
+    public ResponseEntity saveAndReturnDTO(DeceasedDTO deceasedDTO) {
+        Optional<Grave> graveOptional = graveRepository.findById(deceasedDTO.getGraveId());
 
         if(!graveOptional.isPresent()) {
-            log.error("Grave not found for id: " + id);
-            return new DeceasedDTO();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Grave not found for id: " + deceasedDTO.getGraveId().toString());
         } else {
             Grave grave = graveOptional.get();
 
@@ -155,21 +144,36 @@ public class DeceasedServiceImpl implements DeceasedService {
             DeceasedDTO savedDeceasedDTO = deceasedMapper.deceasedToDeceasedDTO(savedDeceased);
             savedDeceasedDTO.setGraveId(savedDeceased.getGrave().getId());
 
-            return savedDeceasedDTO;
+            return ResponseEntity.status(HttpStatus.OK).body(savedDeceasedDTO);
         }
     }
 
     @Override
-    public void deleteByGraveIdAndDeceasedId(Long graveId, Long deceasedId) {
-        Grave grave = graveRepository.findById(graveId).get();
-        Deceased deceasedToDelete = grave
-                .getDeceased()
-                .stream()
-                .filter(deceased -> deceased.getId().equals(deceasedId))
-                .findFirst()
-                .get();
-        deceasedToDelete.setGrave(null);
-        grave.getDeceased().removeIf(deceased -> deceased.getId().equals(deceasedId));
-        graveRepository.save(grave);
+    public ResponseEntity deleteByDeceasedId(Long deceasedId) {
+        Optional<Deceased> deceasedOptional = deceasedRepository.findById(deceasedId);
+
+        if (deceasedOptional.isPresent()) {
+            Deceased deceased = deceasedOptional.get();
+
+            Optional<Grave> graveOptional = graveRepository.findById(deceased.getGrave().getId());
+
+            if (graveOptional.isPresent()) {
+                Grave grave = graveOptional.get();
+                Deceased deceasedToDelete = grave
+                        .getDeceased()
+                        .stream()
+                        .filter(deceasedElem -> deceasedElem.getId().equals(deceasedId))
+                        .findFirst()
+                        .get();
+                deceasedToDelete.setGrave(null);
+                grave.getDeceased().removeIf(deceasedElem -> deceasedElem.getId().equals(deceasedId));
+                graveRepository.save(grave);
+
+                return ResponseEntity.status(HttpStatus.OK).body("Successfully deleted deceased with id: " + deceasedId.toString());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Grave not found for id: " + deceased.getGrave().getId().toString());
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Deceased not found for id: " + deceasedId.toString());
     }
 }

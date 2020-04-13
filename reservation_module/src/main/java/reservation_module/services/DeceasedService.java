@@ -2,16 +2,18 @@ package reservation_module.services;
 
 import reservation_module.api.v1.model.DeceasedDTO;
 import reservation_module.api.v1.model.DeceasedListDTO;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 public interface DeceasedService {
 
     DeceasedListDTO getAllDeceased();
 
-    DeceasedListDTO getAllDeceasedByGraveId(Long graveId);
+    ResponseEntity getAllDeceasedByGraveId(Long graveId);
 
-    DeceasedDTO getByGraveIdAndDeceasedId(Long graveId, Long deceasedId);
+    ResponseEntity getByDeceasedId(Long deceasedId);
 
-    DeceasedDTO saveAndReturnDTO(Long id, DeceasedDTO deceasedDTO);
+    ResponseEntity saveAndReturnDTO(DeceasedDTO deceasedDTO);
 
-    void deleteByGraveIdAndDeceasedId(Long graveId, Long deceasedId);
+    ResponseEntity deleteByDeceasedId(Long deceasedId);
 }
