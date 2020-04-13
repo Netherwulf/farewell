@@ -1,7 +1,9 @@
 package reservation_module.controllers;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import reservation_module.api.v1.model.FuneralDTO;
 import reservation_module.api.v1.model.FuneralListDTO;
 import reservation_module.services.FuneralService;
@@ -24,8 +26,7 @@ public class FuneralController {
     }
 
     @GetMapping("/funerals/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public FuneralDTO getFuneralById(@PathVariable Long id) {
+    public ResponseEntity getFuneralById(@PathVariable Long id) {
         return funeralService.getFuneralById(id);
     }
 
@@ -35,10 +36,9 @@ public class FuneralController {
         return funeralService.createNewFuneral(funeralDTO);
     }
 
-    @PutMapping("/funerals/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public FuneralDTO updateFuneral(@PathVariable Long id, @RequestBody FuneralDTO funeralDTO) {
-        return funeralService.saveFuneralByDTO(id, funeralDTO);
+    @PutMapping("/funerals")
+    public ResponseEntity updateFuneral(@RequestBody FuneralDTO funeralDTO) {
+        return funeralService.saveFuneralByDTO(funeralDTO);
     }
 
     @PatchMapping("/funerals/{id}")
@@ -48,9 +48,8 @@ public class FuneralController {
     }
 
     @DeleteMapping("/funerals/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteFuneral(@PathVariable Long id) {
-        funeralService.deleteFuneralById(id);
+    public ResponseEntity deleteFuneral(@PathVariable Long id) {
+        return funeralService.deleteFuneralById(id);
     }
 
 }

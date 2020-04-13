@@ -203,6 +203,15 @@ public class GraveServiceImpl implements GraveService {
             grave.setFuneral(newFuneral);
 
             funeralRepository.save(newFuneral);
+        } else {
+            Optional<Funeral> funeralOptional = funeralRepository.findById(grave.getFuneral().getId());
+            Funeral funeral = funeralOptional.get();
+
+            funeral.getGrave().setFuneral(null);
+            funeral.setGrave(grave);
+            grave.setFuneral(funeral);
+
+            funeralRepository.save(funeralOptional.get());
         }
 
         GraveDTO returnDTO = graveMapper.graveToGraveDTO(grave);
