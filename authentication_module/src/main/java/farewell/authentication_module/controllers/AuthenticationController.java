@@ -16,7 +16,7 @@ public class AuthenticationController {
     @Autowired
     private UserServiceInterface userService;
 
-    @PostMapping({"/authenticate"})
+    @PostMapping({"/register"})
     public ResponseEntity createAuthenticationToken(@RequestBody UserDTO userDTO) {
         return userService.register(userDTO);
     }
