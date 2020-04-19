@@ -1,5 +1,12 @@
 version: "3.7"
 services:
+  authentication_module:
+      container_name: "farewell_authentication_module"
+      image: "farewell/authentication_module:latest"
+      ports:
+        - 7000:8080
+      depends_on:
+        - db
   reservation_module:
     container_name: "farewell_reservation_module"
     image: "farewell/reservation_module:latest"
@@ -23,6 +30,6 @@ services:
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_MULTIPLE_DATABASES=reservations_db,app_test
+      - POSTGRES_MULTIPLE_DATABASES=reservations_db,app_test,authentication_db
     ports:
       - 5432:5432
