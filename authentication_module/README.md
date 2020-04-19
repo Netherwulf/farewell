@@ -4,14 +4,14 @@
  Authentication Module
 
 
-###Technologies used:
+## Technologies used:
 
 * Docker
 * Spring Boot
 * Hibernate
 * PostgreSQL
 
-### Commands
+## Commands
 
 * Building and running with Maven - execute inside farewell/authentication_module directory :
     * mvn package
