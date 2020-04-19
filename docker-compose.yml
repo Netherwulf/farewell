@@ -7,6 +7,13 @@ services:
       - 8080:8080
     depends_on:
       - db
+  analytical_module:
+    container_name: "farewell_analytical_module"
+    image: "farewell/analytical_module:latest"
+    ports:
+      - 8081:8081
+    depends_on:
+      - db
   db:
     container_name: "farewell_db"
     image: "postgres:11.7"

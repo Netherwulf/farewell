@@ -129,6 +129,24 @@ public class DummyData implements ApplicationListener<ContextRefreshedEvent> {
         // save grave with no funeral and no deceased
         graveList.add(graveThree);
 
+        // create grave with no reservation date
+        Grave graveFour = new Grave();
+        graveFour.setGraveNumber("99997");
+        graveFour.setCoordinates("30-21-18.0-N 3-26-22.7-W");
+        graveFour.setCapacity("1");
+
+        // save grave with no funeral and no deceased
+        graveList.add(graveFour);
+
+        // create grave with no reservation date
+        Grave graveFive = new Grave();
+        graveFive.setGraveNumber("99996");
+        graveFive.setCoordinates("30-20-15.0-N 3-21-19.7-W");
+        graveFive.setCapacity("4");
+
+        // save grave with no funeral and no deceased
+        graveList.add(graveFive);
+
         // saving funerals and single grave to database
         funeralRepository.saveAll(funeralList);
         graveRepository.saveAll(graveList);

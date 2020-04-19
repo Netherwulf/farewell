@@ -10,6 +10,11 @@
 # IntelliJ files
 .idea/
 
+# Analytical Module temp files
+/analytical_module/.gradle
+/analytical_module/build
+/analytical_module/target
+
 # Reservation Module temp files
 /reservation_module/.gradle
 /reservation_module/build

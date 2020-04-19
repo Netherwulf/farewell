@@ -10,6 +10,15 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     GRANT ALL PRIVILEGES ON DATABASE reservations_db TO $POSTGRES_USER;
 EOSQL
 
+echo "Creating database: analytical_db"
+
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+    -- drop database if exists
+    DROP DATABASE IF EXISTS analytical_db;
+    CREATE DATABASE analytical_db WITH ENCODING = 'UTF8';
+    GRANT ALL PRIVILEGES ON DATABASE analytical_db TO $POSTGRES_USER;
+EOSQL
+
 #	      \connect $database
 #	      -- drop tables if they exist
 #	      ALTER TABLE IF EXISTS Grave DROP CONSTRAINT Concerns;
