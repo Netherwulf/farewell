@@ -1,0 +1,1 @@
+export const authURL = 'http://localhost:4000';

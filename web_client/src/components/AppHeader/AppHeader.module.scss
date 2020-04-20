@@ -1,0 +1,132 @@
+@import "./src/assets/scss/variables";
+
+.header {
+    display: flex;
+    padding: 0;
+    text-align: left;
+    justify-content: space-between;
+    background-color: $backgroundDark;
+    color: $basicHeaderText;
+    margin-bottom: 1rem;
+  
+    & a {
+      text-decoration: none;
+      color: $basicHeaderText;
+    }
+
+    @media (max-width: 580px) {
+        flex-direction: column;
+    
+        &:hover {
+          padding: 0 0 0.6em 0;
+        }
+    
+        &:hover .tab {
+          display: block;
+        }
+    
+        &:hover .navigable {
+          display: block;
+        }
+    
+        &:hover .tab-group {
+          padding: 0 0 0.2em 0;
+        }
+      }
+}
+
+.navigable {
+  padding: 0 0.8em 0.2em 0.8em;
+  align-items: center;
+  display: flex;
+
+  & span {
+    margin-right: 0.3em;
+  }
+
+  @media (max-width: 580px) {
+    padding: 0.1em 0.8em 0.1em 0.8em;
+    display: none;
+  }
+
+  &:hover {
+    color: white;
+    cursor: pointer;
+  }
+
+  &:hover a {
+    color: white;
+    cursor: pointer;
+  }
+}
+
+.tabGroup {
+    display: flex;
+    @media (max-width: 580px) {
+      flex-direction: column;
+    }
+}
+
+.headerTitle {
+  padding: 0.6em 0.6em 0.8em 0.4em;
+  font-size: 1.2em;
+  font-weight: 480;
+
+  & span {
+    margin-right: 0.2em;
+  }
+
+  &:hover {
+    color: white;
+    cursor: pointer;
+  }
+
+  &:hover a {
+    color: white;
+    cursor: pointer;
+  }
+}
+
+.tab {
+    padding: 0 0.8em 0.2em 0.8em;
+    align-items: center;
+    display: flex;
+
+    @media (max-width: 580px) {
+        padding: 0.1em 0.8em 0.1em 0.8em;
+        display: none;
+    }
+
+    &:hover {
+        color: white;
+        cursor: pointer;
+    }
+
+    &:hover a {
+        color: white;
+        cursor: pointer;
+    }
+}
+
+.tabActive {
+    padding: 0 0.8em 0.2em 0.8em;
+    align-items: center;
+    display: flex;
+    color: white;
+    background: $backgroundDarker;
+
+    @media (max-width: 580px) {
+        padding: 0.1em 0.8em 0.1em 0.8em;
+        display: none;
+    }
+
+    &:hover {
+        color: white;
+        cursor: pointer;
+    }
+
+    &:hover a {
+        color: white;
+        cursor: pointer;
+    }
+}
