@@ -1,26 +1,51 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Layout from './hoc/Layout/Layout';
+import Funerals from './components/Funerals/Funerals';
+import Reservations from './components/Reservations/Reservations';
+import Landing from './components/Landing/Landing';
+import Login from './components/Login/Login';
+import * as actions from './store/actions/actionsIndex';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+
+  render() {
+
+    const nonAuthenticatedRoutes = (
+      <Switch>
+        <Route path='/login' component={Login} />
+        <Redirect to='/login' />
+      </Switch>
+    );
+
+    const authenticatedRoutes = (
+      <Switch>
+        <Route path='/funerals' component={Funerals} />
+        <Route path='/reservations' component={Reservations} />
+        <Route path='/my-reservations' component={Reservations} />
+        <Route path='/logout' component={Landing} />
+        <Route path='/' exact component={Landing} />
+        <Redirect to='/' />
+      </Switch>
+    );
+    return (
+      <CssBaseline>
+        <Layout>
+          { this.props.isAuthenticated ? authenticatedRoutes : nonAuthenticatedRoutes }
+        </Layout>
+      </CssBaseline>
+    );
+  }
 }
 
-export default App;
+const mapStateToProps = state => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
+
+const mapDispatchToProps = dispatch => ({
+  onLogin: () => dispatch(actions.login()),
+});
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));
