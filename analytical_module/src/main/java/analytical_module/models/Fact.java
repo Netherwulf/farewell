@@ -12,9 +12,11 @@ public class Fact {
 
     private String funeralId;
     private String funeralReservationDate;
+    private String funeralPurchaseDate;
     private String funeralDate;
     private String graveId;
     private String graveReservationDate;
+    private String gravePurchaseDate;
     private String graveNumber;
     private String graveCoordinates;
     private String graveCapacity;
@@ -28,7 +30,7 @@ public class Fact {
     private String creationDate;
     private String userId;
 
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne(cascade = {CascadeType.PERSIST})
     private FuneralDirector funeralDirector;
 
     public Long getId() {
@@ -181,5 +183,21 @@ public class Fact {
 
     public void setFuneralDirector(FuneralDirector funeralDirector) {
         this.funeralDirector = funeralDirector;
+    }
+
+    public String getGravePurchaseDate() {
+        return gravePurchaseDate;
+    }
+
+    public void setGravePurchaseDate(String gravePurchaseDate) {
+        this.gravePurchaseDate = gravePurchaseDate;
+    }
+
+    public String getFuneralPurchaseDate() {
+        return funeralPurchaseDate;
+    }
+
+    public void setFuneralPurchaseDate(String funeralPurchaseDate) {
+        this.funeralPurchaseDate = funeralPurchaseDate;
     }
 }

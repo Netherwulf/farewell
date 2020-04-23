@@ -1,6 +1,5 @@
 package analytical_module.api.v1.model;
 
-import analytical_module.models.Fact;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -19,5 +18,5 @@ public class FuneralDirectorDTO {
     private String religion;
     private String email;
 
-    private Set<Fact> facts = new HashSet<>();
+    private Set<FactDTO> facts = new HashSet<>();
 }

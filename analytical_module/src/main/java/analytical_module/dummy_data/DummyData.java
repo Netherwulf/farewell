@@ -23,19 +23,19 @@ public class DummyData implements ApplicationListener<ContextRefreshedEvent> {
     }
 
     private void loadData() {
-        // initialization of funerals list
+        // initialization of facts list
         List<Fact> factList = new ArrayList<>();
 
-        // initialization of graves list
+        // initialization of funeral directors list
         List<FuneralDirector> funeralDirectorList = new ArrayList<>();
 
-        // create first funeral
+        // create first fact
 
-        // saving funerals and single grave to database
+        // saving funeral directors and single facts to database
         factRepository.saveAll(factList);
         funeralDirectorRepository.saveAll(funeralDirectorList);
 
-        // print number of funerals, graves and deceased saved to database
+        // print number of funeral directors and facts saved to database
         System.out.println("Facts loaded = " + factRepository.count() + " / 3");
         System.out.println("Funeral Directors loaded   = " + funeralDirectorRepository.count() + " / 3");
 

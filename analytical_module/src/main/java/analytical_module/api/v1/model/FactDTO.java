@@ -12,9 +12,11 @@ public class FactDTO {
 
     private String funeralId;
     private String funeralReservationDate;
+    private String funeralPurchaseDate;
     private String funeralDate;
     private String graveId;
     private String graveReservationDate;
+    private String gravePurchaseDate;
     private String graveNumber;
     private String graveCoordinates;
     private String graveCapacity;
