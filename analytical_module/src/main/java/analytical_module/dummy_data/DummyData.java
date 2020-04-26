@@ -142,7 +142,7 @@ public class DummyData implements ApplicationListener<ContextRefreshedEvent> {
 
         // print number of funeral directors and facts saved to database
         System.out.println("Facts loaded = " + factRepository.count() + " / 6-12");
-        System.out.println("Funeral Directors loaded   = " + funeralDirectorRepository.count() + " / 5");
+        System.out.println("Funeral Directors loaded   = " + funeralDirectorRepository.count() + " / 6");
 
     }
 

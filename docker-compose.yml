@@ -1,12 +1,12 @@
 version: "3.7"
 services:
   authentication_module:
-      container_name: "farewell_authentication_module"
-      image: "farewell/authentication_module:latest"
-      ports:
-        - 7000:8080
-      depends_on:
-        - db
+    container_name: "farewell_authentication_module"
+    image: "farewell/authentication_module:latest"
+    ports:
+      - 7000:8080
+    depends_on:
+      - db
   reservation_module:
     container_name: "farewell_reservation_module"
     image: "farewell/reservation_module:latest"
@@ -26,10 +26,10 @@ services:
     container_name: "farewell_db"
     image: "postgres:11.7"
     volumes:
+      - ./db/init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
 #      - ./db_init_scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
 #      - ./postgres_data:/var/lib/postgresql/data
 #      - ./db_init_scripts/init-user-db-old.sh:/docker-entrypoint-initdb.d/init-user-db-old.sh
-      - ./db/init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}

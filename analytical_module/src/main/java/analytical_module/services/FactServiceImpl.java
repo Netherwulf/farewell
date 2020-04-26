@@ -173,6 +173,14 @@ public class FactServiceImpl implements FactService {
     }
 
     private Double getMedian(HashMap<String, Long> funeralsCountByDateLength) {
+        if (funeralsCountByDateLength.size() == 0) {
+            return (double) 0;
+        }
+
+        if (funeralsCountByDateLength.size() == 1) {
+            return new Double(funeralsCountByDateLength.get(new ArrayList(funeralsCountByDateLength.keySet()).get(0)));
+        }
+
         DoubleStream funeralsPerDateLengthSorted = funeralsCountByDateLength
                 .values()
                 .stream()
