@@ -136,7 +136,7 @@ public class FactServiceImpl implements FactService {
 
     private HashMap<String, Long> getFuneralCountsPerDateLength(int dateLength) {
         HashMap<String, Long> funeralsCountByDateLength = new HashMap<>();
-        List<Integer> funeralIds = new ArrayList<>();
+        List<String> funeralIds = new ArrayList<>();
 
         factRepository
                 .findAll()
@@ -155,6 +155,7 @@ public class FactServiceImpl implements FactService {
                             }
                         }
                     }
+                    return null;
                 });
 
         return funeralsCountByDateLength;
@@ -210,7 +211,7 @@ public class FactServiceImpl implements FactService {
 
     private HashMap<String, Long> getFuneralsPerFuneralDirector() {
         HashMap<String, Long> funeralsPerFuneralDirector = new HashMap<>();
-        List<Long> funeralIds = new ArrayList<>();
+        List<String> funeralIds = new ArrayList<>();
 
         factRepository
                 .findAll()
@@ -229,6 +230,7 @@ public class FactServiceImpl implements FactService {
                             }
                         }
                     }
+                    return null;
                 });
 
         return funeralsPerFuneralDirector;
@@ -236,14 +238,14 @@ public class FactServiceImpl implements FactService {
 
     private HashMap<String, Long> getFuneralsPerUser() {
         HashMap<String, Long> funeralsPerUser = new HashMap<>();
-        List<Long> funeralIds = new ArrayList<>();
+        List<String> funeralIds = new ArrayList<>();
 
         factRepository
                 .findAll()
                 .stream()
                 .map(fact -> {
                     String userId = fact.getUserId().toString();
-                    if (fact.getFuneralId != null && !funeralIds.contains(fact.getFuneralId())) {
+                    if (fact.getFuneralId() != null && !funeralIds.contains(fact.getFuneralId())) {
                         if (!funeralsPerUser.containsKey(userId)) {
                             funeralsPerUser.put(userId, 1L);
                             funeralIds.add(fact.getFuneralId());
@@ -253,6 +255,7 @@ public class FactServiceImpl implements FactService {
                             funeralIds.add(fact.getFuneralId());
                         }
                     }
+                    return null;
                 });
 
         return funeralsPerUser;
@@ -260,7 +263,7 @@ public class FactServiceImpl implements FactService {
 
     private HashMap<String, Long> getGraveCountsPerDateLength(int dateLength) {
         HashMap<String, Long> gravesCountByDateLength = new HashMap<>();
-        List<Integer> graveIds = new ArrayList<>();
+        List<String> graveIds = new ArrayList<>();
 
         factRepository
                 .findAll()
@@ -279,6 +282,7 @@ public class FactServiceImpl implements FactService {
                             }
                         }
                     }
+                    return null;
                 });
 
         return gravesCountByDateLength;
@@ -286,23 +290,24 @@ public class FactServiceImpl implements FactService {
 
     private HashMap<String, Long> getDeceasedPerGrave() {
         HashMap<String, Long> deceasedPerGrave = new HashMap<>();
-        List<Long> deceasedIds = new ArrayList<>();
+        List<String> deceasedIds = new ArrayList<>();
 
         factRepository
                 .findAll()
                 .stream()
                 .map(fact -> {
                     String graveId = fact.getGraveId().toString();
-                    if (fact.getDecasedId() != null && !deceasedIds.contains(fact.getDecasedId())) {
+                    if (fact.getDeceasedId() != null && !deceasedIds.contains(fact.getDeceasedId())) {
                         if (!deceasedPerGrave.containsKey(graveId)) {
                             deceasedPerGrave.put(graveId, 1L);
-                            deceasedIds.add(fact.getDecasedId());
+                            deceasedIds.add(fact.getDeceasedId());
                         } else {
                             Long currentCount = deceasedPerGrave.get(graveId);
                             deceasedPerGrave.replace(graveId, currentCount + 1L);
-                            deceasedIds.add(fact.getDecasedId());
+                            deceasedIds.add(fact.getDeceasedId());
                         }
                     }
+                    return null;
                 });
 
         return deceasedPerGrave;
@@ -310,7 +315,7 @@ public class FactServiceImpl implements FactService {
 
     private HashMap<String, Long> getGravesPerUser() {
         HashMap<String, Long> gravesPerUser = new HashMap<>();
-        List<Long> graveIds = new ArrayList<>();
+        List<String> graveIds = new ArrayList<>();
 
         factRepository
                 .findAll()
@@ -327,6 +332,7 @@ public class FactServiceImpl implements FactService {
                             graveIds.add(fact.getGraveId());
                         }
                     }
+                    return null;
                 });
 
         return gravesPerUser;
@@ -337,23 +343,34 @@ public class FactServiceImpl implements FactService {
         FuneralReportDTO funeralReportDTO = new FuneralReportDTO();
 
         // average time between reservation and purchase in days
-        HashMap<Long, Date> funeralsReservationDates = new HashMap<>();
-        HashMap<Long, Date> funeralsPurchaseDates = new HashMap<>();
-        HashMap<Long, Long> funeralsReservationToPurchaseTime = new HashMap<>();
+        HashMap<String, Date> funeralsReservationDates = new HashMap<>();
+        HashMap<String, Date> funeralsPurchaseDates = new HashMap<>();
+        HashMap<String, Long> funeralsReservationToPurchaseTime = new HashMap<>();
 
         factRepository.findAll().stream()
                 .map(fact -> {
                     if (!funeralsReservationDates.containsKey(fact.getFuneralId()) && fact.getFuneralReservationDate() != null) {
-                        Date reservationDate = new SimpleDateFormat("yyyy-MM-dd").parse(fact.getFuneralReservationDate().substring(0, 10));
+                        Date reservationDate = new Date();
+                        try {
+                            reservationDate = new SimpleDateFormat("yyyy-MM-dd").parse(fact.getFuneralReservationDate().substring(0, 10));
+                        } catch (Exception e) {
+                            System.out.println("Exception occurred during date parsing date: " + fact.getFuneralReservationDate().substring(0, 10));
+                        }
                         funeralsReservationDates.put(fact.getFuneralId(), reservationDate);
                     }
                     if (!funeralsPurchaseDates.containsKey(fact.getFuneralId()) && fact.getFuneralPurchaseDate() != null) {
-                        Date purchaseDate = new SimpleDateFormat("yyyy-MM-dd").parse(fact.getFuneralPurchaseDate().substring(0, 10));
+                        Date purchaseDate = new Date();
+                        try {
+                        purchaseDate = new SimpleDateFormat("yyyy-MM-dd").parse(fact.getFuneralPurchaseDate().substring(0, 10));
+                        } catch (Exception e) {
+                            System.out.println("Exception occurred during date parsing date: " + fact.getFuneralReservationDate().substring(0, 10));
+                        }
                         funeralsPurchaseDates.put(fact.getFuneralId(), purchaseDate);
                     }
+                    return null;
                 });
 
-        for (Long id: funeralsReservationDates.keySet()) {
+        for (String id: funeralsReservationDates.keySet()) {
             if (funeralsPurchaseDates.containsKey(id)) {
                 LocalDate reservationDate = funeralsReservationDates
                         .get(id).toInstant()
@@ -477,23 +494,34 @@ public class FactServiceImpl implements FactService {
         GraveReportDTO graveReportDTO = new GraveReportDTO();
 
         // average time between reservation and purchase in days
-        HashMap<Long, Date> gravesReservationDates = new HashMap<>();
-        HashMap<Long, Date> gravesPurchaseDates = new HashMap<>();
-        HashMap<Long, Long> gravesReservationToPurchaseTime = new HashMap<>();
+        HashMap<String, Date> gravesReservationDates = new HashMap<>();
+        HashMap<String, Date> gravesPurchaseDates = new HashMap<>();
+        HashMap<String, Long> gravesReservationToPurchaseTime = new HashMap<>();
 
         factRepository.findAll().stream()
                 .map(fact -> {
                     if (!gravesReservationDates.containsKey(fact.getGraveId()) && fact.getGraveReservationDate() != null) {
-                        Date reservationDate = new SimpleDateFormat("yyyy-MM-dd").parse(fact.getGraveReservationDate().substring(0, 10));
+                        Date reservationDate = new Date();
+                        try {
+                        reservationDate = new SimpleDateFormat("yyyy-MM-dd").parse(fact.getGraveReservationDate().substring(0, 10));
+                        } catch (Exception e) {
+                            System.out.println("Exception occurred during date parsing date: " + fact.getFuneralReservationDate().substring(0, 10));
+                        }
                         gravesReservationDates.put(fact.getGraveId(), reservationDate);
                     }
                     if (!gravesPurchaseDates.containsKey(fact.getGraveId()) && fact.getGravePurchaseDate() != null) {
-                        Date purchaseDate = new SimpleDateFormat("yyyy-MM-dd").parse(fact.getGravePurchaseDate().substring(0, 10));
+                        Date purchaseDate = new Date();
+                        try {
+                        purchaseDate = new SimpleDateFormat("yyyy-MM-dd").parse(fact.getGravePurchaseDate().substring(0, 10));
+                        } catch (Exception e) {
+                            System.out.println("Exception occurred during date parsing date: " + fact.getFuneralReservationDate().substring(0, 10));
+                        }
                         gravesPurchaseDates.put(fact.getGraveId(), purchaseDate);
                     }
+                    return null;
                 });
 
-        for (Long id: gravesReservationDates.keySet()) {
+        for (String id: gravesReservationDates.keySet()) {
             if (gravesPurchaseDates.containsKey(id)) {
                 LocalDate reservationDate = gravesReservationDates
                         .get(id).toInstant()

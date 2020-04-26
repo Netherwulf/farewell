@@ -3,16 +3,18 @@ set -e
 
 echo "Creating database: reservations_db"
 
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+#psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
     -- drop database if exists
-    DROP DATABASE IF EXISTS dbname;
-    CREATE DATABASE dbname WITH ENCODING = 'UTF8';
-    GRANT ALL PRIVILEGES ON DATABASE dbname TO $POSTGRES_USER;
+    DROP DATABASE IF EXISTS reservations_db;
+    CREATE DATABASE reservations_db WITH ENCODING = 'UTF8';
+    GRANT ALL PRIVILEGES ON DATABASE reservations_db TO $POSTGRES_USER;
 EOSQL
 
 echo "Creating database: analytical_db"
 
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+#psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
     -- drop database if exists
     DROP DATABASE IF EXISTS analytical_db;
     CREATE DATABASE analytical_db WITH ENCODING = 'UTF8';

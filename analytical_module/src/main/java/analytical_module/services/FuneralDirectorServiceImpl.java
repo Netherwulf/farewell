@@ -1,7 +1,6 @@
 package analytical_module.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -119,7 +118,7 @@ public class FuneralDirectorServiceImpl implements FuneralDirectorService {
         Optional<FuneralDirector> funeralDirectorOptional = funeralDirectorRepository.findById(funeralDirectorDTO.getId());
 
         if (!funeralDirectorOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Funeral Director not found for ID: " + funeralDirectorId.toString());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Funeral Director not found for ID: " + funeralDirectorDTO.getId().toString());
         }
 
         FuneralDirector funeralDirector = funeralDirectorOptional.get();
@@ -155,7 +154,7 @@ public class FuneralDirectorServiceImpl implements FuneralDirectorService {
 
     @Override
     public ResponseEntity deleteFuneralDirectorById(Long funeralDirectorId) {
-        Optional<FuneralDirector> funeralDirectorOptional = funeralDirectorRepository.findById(funeralDirectorDTO.getId());
+        Optional<FuneralDirector> funeralDirectorOptional = funeralDirectorRepository.findById(funeralDirectorId);
 
         if (!funeralDirectorOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Funeral Director not found for ID: " + funeralDirectorId.toString());
