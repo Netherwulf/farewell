@@ -135,28 +135,46 @@ public class FactServiceImpl implements FactService {
     }
 
     private HashMap<String, Long> getFuneralCountsPerDateLength(int dateLength) {
+        FactListDTO factDTOList = getAllFacts();
+
         HashMap<String, Long> funeralsCountByDateLength = new HashMap<>();
         List<String> funeralIds = new ArrayList<>();
 
-        factRepository
-                .findAll()
-                .stream()
-                .map(fact -> {
-                    if (fact.getFuneralId() != null && fact.getFuneralDate() != null) {
-                        String funeralDate = fact.getFuneralDate().substring(0, dateLength); // 10-days, 7-months, 4-years
-                        if (!funeralIds.contains(fact.getFuneralId())) {
-                            if (!funeralsCountByDateLength.containsKey(funeralDate)) {
-                                funeralsCountByDateLength.put(funeralDate, 1L);
-                                funeralIds.add(fact.getFuneralId());
-                            } else {
-                                Long currentCount = funeralsCountByDateLength.get(funeralDate);
-                                funeralsCountByDateLength.replace(funeralDate, currentCount + 1L);
-                                funeralIds.add(fact.getFuneralId());
-                            }
-                        }
+        for (FactDTO factDTO: factDTOList.getFacts()) {
+            if (factDTO.getFuneralId() != null && factDTO.getFuneralDate() != null) {
+                String funeralDate = factDTO.getFuneralDate().substring(0, dateLength); // 10-days, 7-months, 4-years
+                if (!funeralIds.contains(factDTO.getFuneralId())) {
+                    if (!funeralsCountByDateLength.containsKey(funeralDate)) {
+                        funeralsCountByDateLength.put(funeralDate, 1L);
+                        funeralIds.add(factDTO.getFuneralId());
+                    } else {
+                        Long currentCount = funeralsCountByDateLength.get(funeralDate);
+                        funeralsCountByDateLength.replace(funeralDate, currentCount + 1L);
+                        funeralIds.add(factDTO.getFuneralId());
                     }
-                    return null;
-                });
+                }
+            }
+        }
+
+//        factRepository
+//                .findAll()
+//                .stream()
+//                .map(fact -> {
+//                    if (fact.getFuneralId() != null && fact.getFuneralDate() != null) {
+//                        String funeralDate = fact.getFuneralDate().substring(0, dateLength); // 10-days, 7-months, 4-years
+//                        if (!funeralIds.contains(fact.getFuneralId())) {
+//                            if (!funeralsCountByDateLength.containsKey(funeralDate)) {
+//                                funeralsCountByDateLength.put(funeralDate, 1L);
+//                                funeralIds.add(fact.getFuneralId());
+//                            } else {
+//                                Long currentCount = funeralsCountByDateLength.get(funeralDate);
+//                                funeralsCountByDateLength.replace(funeralDate, currentCount + 1L);
+//                                funeralIds.add(fact.getFuneralId());
+//                            }
+//                        }
+//                    }
+//                    return null;
+//                });
 
         return funeralsCountByDateLength;
     }
@@ -221,25 +239,43 @@ public class FactServiceImpl implements FactService {
         HashMap<String, Long> funeralsPerFuneralDirector = new HashMap<>();
         List<String> funeralIds = new ArrayList<>();
 
-        factRepository
-                .findAll()
-                .stream()
-                .map(fact -> {
-                    if (fact.getFuneralId() != null && fact.getFuneralDirector() != null) {
-                        String funeralDirectorId = fact.getFuneralDirector().getId().toString();
-                        if (!funeralIds.contains(fact.getFuneralId())) {
-                            if (!funeralsPerFuneralDirector.containsKey(funeralDirectorId)) {
-                                funeralsPerFuneralDirector.put(funeralDirectorId, 1L);
-                                funeralIds.add(fact.getFuneralId());
-                            } else {
-                                Long currentCount = funeralsPerFuneralDirector.get(funeralDirectorId);
-                                funeralsPerFuneralDirector.replace(funeralDirectorId, currentCount + 1L);
-                                funeralIds.add(fact.getFuneralId());
-                            }
-                        }
+        FactListDTO factDTOList = getAllFacts();
+
+        for (FactDTO factDTO: factDTOList.getFacts()) {
+            if (factDTO.getFuneralId() != null && factDTO.getFuneralDirectorId() != null) {
+                String funeralDirectorId = factDTO.getFuneralDirectorId().toString();
+                if (!funeralIds.contains(factDTO.getFuneralId())) {
+                    if (!funeralsPerFuneralDirector.containsKey(funeralDirectorId)) {
+                        funeralsPerFuneralDirector.put(funeralDirectorId, 1L);
+                        funeralIds.add(factDTO.getFuneralId());
+                    } else {
+                        Long currentCount = funeralsPerFuneralDirector.get(funeralDirectorId);
+                        funeralsPerFuneralDirector.replace(funeralDirectorId, currentCount + 1L);
+                        funeralIds.add(factDTO.getFuneralId());
                     }
-                    return null;
-                });
+                }
+            }
+        }
+
+//        factRepository
+//                .findAll()
+//                .stream()
+//                .map(fact -> {
+//                    if (fact.getFuneralId() != null && fact.getFuneralDirector() != null) {
+//                        String funeralDirectorId = fact.getFuneralDirector().getId().toString();
+//                        if (!funeralIds.contains(fact.getFuneralId())) {
+//                            if (!funeralsPerFuneralDirector.containsKey(funeralDirectorId)) {
+//                                funeralsPerFuneralDirector.put(funeralDirectorId, 1L);
+//                                funeralIds.add(fact.getFuneralId());
+//                            } else {
+//                                Long currentCount = funeralsPerFuneralDirector.get(funeralDirectorId);
+//                                funeralsPerFuneralDirector.replace(funeralDirectorId, currentCount + 1L);
+//                                funeralIds.add(fact.getFuneralId());
+//                            }
+//                        }
+//                    }
+//                    return null;
+//                });
 
         return funeralsPerFuneralDirector;
     }
@@ -248,23 +284,39 @@ public class FactServiceImpl implements FactService {
         HashMap<String, Long> funeralsPerUser = new HashMap<>();
         List<String> funeralIds = new ArrayList<>();
 
-        factRepository
-                .findAll()
-                .stream()
-                .map(fact -> {
-                    String userId = fact.getUserId().toString();
-                    if (fact.getFuneralId() != null && !funeralIds.contains(fact.getFuneralId())) {
-                        if (!funeralsPerUser.containsKey(userId)) {
-                            funeralsPerUser.put(userId, 1L);
-                            funeralIds.add(fact.getFuneralId());
-                        } else {
-                            Long currentCount = funeralsPerUser.get(userId);
-                            funeralsPerUser.replace(userId, currentCount + 1L);
-                            funeralIds.add(fact.getFuneralId());
-                        }
-                    }
-                    return null;
-                });
+        FactListDTO factDTOList = getAllFacts();
+
+        for (FactDTO factDTO: factDTOList.getFacts()) {
+            String userId = factDTO.getUserId().toString();
+            if (factDTO.getFuneralId() != null && !funeralIds.contains(factDTO.getFuneralId())) {
+                if (!funeralsPerUser.containsKey(userId)) {
+                    funeralsPerUser.put(userId, 1L);
+                    funeralIds.add(factDTO.getFuneralId());
+                } else {
+                    Long currentCount = funeralsPerUser.get(userId);
+                    funeralsPerUser.replace(userId, currentCount + 1L);
+                    funeralIds.add(factDTO.getFuneralId());
+                }
+            }
+        }
+
+//        factRepository
+//                .findAll()
+//                .stream()
+//                .map(fact -> {
+//                    String userId = fact.getUserId().toString();
+//                    if (fact.getFuneralId() != null && !funeralIds.contains(fact.getFuneralId())) {
+//                        if (!funeralsPerUser.containsKey(userId)) {
+//                            funeralsPerUser.put(userId, 1L);
+//                            funeralIds.add(fact.getFuneralId());
+//                        } else {
+//                            Long currentCount = funeralsPerUser.get(userId);
+//                            funeralsPerUser.replace(userId, currentCount + 1L);
+//                            funeralIds.add(fact.getFuneralId());
+//                        }
+//                    }
+//                    return null;
+//                });
 
         return funeralsPerUser;
     }
@@ -273,25 +325,43 @@ public class FactServiceImpl implements FactService {
         HashMap<String, Long> gravesCountByDateLength = new HashMap<>();
         List<String> graveIds = new ArrayList<>();
 
-        factRepository
-                .findAll()
-                .stream()
-                .map(fact -> {
-                    if (fact.getGraveId() != null && fact.getGraveReservationDate() != null) {
-                        String graveDate = fact.getGraveReservationDate().substring(0, dateLength); // 10-days, 7-months, 4-years
-                        if (!graveIds.contains(fact.getGraveId())) {
-                            if (!gravesCountByDateLength.containsKey(graveDate)) {
-                                gravesCountByDateLength.put(graveDate, 1L);
-                                graveIds.add(fact.getGraveId());
-                            } else {
-                                Long currentCount = gravesCountByDateLength.get(graveDate);
-                                gravesCountByDateLength.replace(graveDate, currentCount + 1L);
-                                graveIds.add(fact.getGraveId());
-                            }
-                        }
+        FactListDTO factDTOList = getAllFacts();
+
+        for (FactDTO factDTO: factDTOList.getFacts()) {
+            if (factDTO.getGraveId() != null && factDTO.getGraveReservationDate() != null) {
+                String graveDate = factDTO.getGraveReservationDate().substring(0, dateLength); // 10-days, 7-months, 4-years
+                if (!graveIds.contains(factDTO.getGraveId())) {
+                    if (!gravesCountByDateLength.containsKey(graveDate)) {
+                        gravesCountByDateLength.put(graveDate, 1L);
+                        graveIds.add(factDTO.getGraveId());
+                    } else {
+                        Long currentCount = gravesCountByDateLength.get(graveDate);
+                        gravesCountByDateLength.replace(graveDate, currentCount + 1L);
+                        graveIds.add(factDTO.getGraveId());
                     }
-                    return null;
-                });
+                }
+            }
+        }
+
+//        factRepository
+//                .findAll()
+//                .stream()
+//                .map(fact -> {
+//                    if (fact.getGraveId() != null && fact.getGraveReservationDate() != null) {
+//                        String graveDate = fact.getGraveReservationDate().substring(0, dateLength); // 10-days, 7-months, 4-years
+//                        if (!graveIds.contains(fact.getGraveId())) {
+//                            if (!gravesCountByDateLength.containsKey(graveDate)) {
+//                                gravesCountByDateLength.put(graveDate, 1L);
+//                                graveIds.add(fact.getGraveId());
+//                            } else {
+//                                Long currentCount = gravesCountByDateLength.get(graveDate);
+//                                gravesCountByDateLength.replace(graveDate, currentCount + 1L);
+//                                graveIds.add(fact.getGraveId());
+//                            }
+//                        }
+//                    }
+//                    return null;
+//                });
 
         return gravesCountByDateLength;
     }
@@ -300,23 +370,39 @@ public class FactServiceImpl implements FactService {
         HashMap<String, Long> deceasedPerGrave = new HashMap<>();
         List<String> deceasedIds = new ArrayList<>();
 
-        factRepository
-                .findAll()
-                .stream()
-                .map(fact -> {
-                    String graveId = fact.getGraveId().toString();
-                    if (fact.getDeceasedId() != null && !deceasedIds.contains(fact.getDeceasedId())) {
-                        if (!deceasedPerGrave.containsKey(graveId)) {
-                            deceasedPerGrave.put(graveId, 1L);
-                            deceasedIds.add(fact.getDeceasedId());
-                        } else {
-                            Long currentCount = deceasedPerGrave.get(graveId);
-                            deceasedPerGrave.replace(graveId, currentCount + 1L);
-                            deceasedIds.add(fact.getDeceasedId());
-                        }
-                    }
-                    return null;
-                });
+        FactListDTO factDTOList = getAllFacts();
+
+        for (FactDTO factDTO: factDTOList.getFacts()) {
+            String graveId = factDTO.getGraveId();
+            if (factDTO.getDeceasedId() != null && !deceasedIds.contains(factDTO.getDeceasedId())) {
+                if (!deceasedPerGrave.containsKey(graveId)) {
+                    deceasedPerGrave.put(graveId, 1L);
+                    deceasedIds.add(factDTO.getDeceasedId());
+                } else {
+                    Long currentCount = deceasedPerGrave.get(graveId);
+                    deceasedPerGrave.replace(graveId, currentCount + 1L);
+                    deceasedIds.add(factDTO.getDeceasedId());
+                }
+            }
+        }
+
+//        factRepository
+//                .findAll()
+//                .stream()
+//                .map(fact -> {
+//                    String graveId = fact.getGraveId().toString();
+//                    if (fact.getDeceasedId() != null && !deceasedIds.contains(fact.getDeceasedId())) {
+//                        if (!deceasedPerGrave.containsKey(graveId)) {
+//                            deceasedPerGrave.put(graveId, 1L);
+//                            deceasedIds.add(fact.getDeceasedId());
+//                        } else {
+//                            Long currentCount = deceasedPerGrave.get(graveId);
+//                            deceasedPerGrave.replace(graveId, currentCount + 1L);
+//                            deceasedIds.add(fact.getDeceasedId());
+//                        }
+//                    }
+//                    return null;
+//                });
 
         return deceasedPerGrave;
     }
@@ -325,23 +411,39 @@ public class FactServiceImpl implements FactService {
         HashMap<String, Long> gravesPerUser = new HashMap<>();
         List<String> graveIds = new ArrayList<>();
 
-        factRepository
-                .findAll()
-                .stream()
-                .map(fact -> {
-                    String userId = fact.getUserId().toString();
-                    if (fact.getGraveId() != null && !graveIds.contains(fact.getGraveId())) {
-                        if (!gravesPerUser.containsKey(userId)) {
-                            gravesPerUser.put(userId, 1L);
-                            graveIds.add(fact.getGraveId());
-                        } else {
-                            Long currentCount = gravesPerUser.get(userId);
-                            gravesPerUser.replace(userId, currentCount + 1L);
-                            graveIds.add(fact.getGraveId());
-                        }
-                    }
-                    return null;
-                });
+        FactListDTO factDTOList = getAllFacts();
+
+        for (FactDTO factDTO: factDTOList.getFacts()) {
+            String userId = factDTO.getUserId().toString();
+            if (factDTO.getGraveId() != null && !graveIds.contains(factDTO.getGraveId())) {
+                if (!gravesPerUser.containsKey(userId)) {
+                    gravesPerUser.put(userId, 1L);
+                    graveIds.add(factDTO.getGraveId());
+                } else {
+                    Long currentCount = gravesPerUser.get(userId);
+                    gravesPerUser.replace(userId, currentCount + 1L);
+                    graveIds.add(factDTO.getGraveId());
+                }
+            }
+        }
+
+//        factRepository
+//                .findAll()
+//                .stream()
+//                .map(fact -> {
+//                    String userId = fact.getUserId().toString();
+//                    if (fact.getGraveId() != null && !graveIds.contains(fact.getGraveId())) {
+//                        if (!gravesPerUser.containsKey(userId)) {
+//                            gravesPerUser.put(userId, 1L);
+//                            graveIds.add(fact.getGraveId());
+//                        } else {
+//                            Long currentCount = gravesPerUser.get(userId);
+//                            gravesPerUser.replace(userId, currentCount + 1L);
+//                            graveIds.add(fact.getGraveId());
+//                        }
+//                    }
+//                    return null;
+//                });
 
         return gravesPerUser;
     }
@@ -355,28 +457,51 @@ public class FactServiceImpl implements FactService {
         HashMap<String, Date> funeralsPurchaseDates = new HashMap<>();
         HashMap<String, Long> funeralsReservationToPurchaseTime = new HashMap<>();
 
-        factRepository.findAll().stream()
-                .map(fact -> {
-                    if (!funeralsReservationDates.containsKey(fact.getFuneralId()) && fact.getFuneralReservationDate() != null) {
-                        Date reservationDate = new Date();
-                        try {
-                            reservationDate = new SimpleDateFormat("yyyy-MM-dd").parse(fact.getFuneralReservationDate().substring(0, 10));
-                        } catch (Exception e) {
-                            System.out.println("Exception occurred during date parsing date: " + fact.getFuneralReservationDate().substring(0, 10));
-                        }
-                        funeralsReservationDates.put(fact.getFuneralId(), reservationDate);
-                    }
-                    if (!funeralsPurchaseDates.containsKey(fact.getFuneralId()) && fact.getFuneralPurchaseDate() != null) {
-                        Date purchaseDate = new Date();
-                        try {
-                        purchaseDate = new SimpleDateFormat("yyyy-MM-dd").parse(fact.getFuneralPurchaseDate().substring(0, 10));
-                        } catch (Exception e) {
-                            System.out.println("Exception occurred during date parsing date: " + fact.getFuneralReservationDate().substring(0, 10));
-                        }
-                        funeralsPurchaseDates.put(fact.getFuneralId(), purchaseDate);
-                    }
-                    return null;
-                });
+        FactListDTO factDTOList = getAllFacts();
+
+        for (FactDTO factDTO: factDTOList.getFacts()) {
+            if (!funeralsReservationDates.containsKey(factDTO.getFuneralId()) && factDTO.getFuneralReservationDate() != null) {
+                Date reservationDate = new Date();
+                try {
+                    reservationDate = new SimpleDateFormat("yyyy-MM-dd").parse(factDTO.getFuneralReservationDate().substring(0, 10));
+                } catch (Exception e) {
+                    System.out.println("Exception occurred during date parsing date: " + factDTO.getFuneralReservationDate().substring(0, 10));
+                }
+                funeralsReservationDates.put(factDTO.getFuneralId(), reservationDate);
+            }
+            if (!funeralsPurchaseDates.containsKey(factDTO.getFuneralId()) && factDTO.getFuneralPurchaseDate() != null) {
+                Date purchaseDate = new Date();
+                try {
+                    purchaseDate = new SimpleDateFormat("yyyy-MM-dd").parse(factDTO.getFuneralPurchaseDate().substring(0, 10));
+                } catch (Exception e) {
+                    System.out.println("Exception occurred during date parsing date: " + factDTO.getFuneralReservationDate().substring(0, 10));
+                }
+                funeralsPurchaseDates.put(factDTO.getFuneralId(), purchaseDate);
+            }
+        }
+
+//        factRepository.findAll().stream()
+//                .map(fact -> {
+//                    if (!funeralsReservationDates.containsKey(fact.getFuneralId()) && fact.getFuneralReservationDate() != null) {
+//                        Date reservationDate = new Date();
+//                        try {
+//                            reservationDate = new SimpleDateFormat("yyyy-MM-dd").parse(fact.getFuneralReservationDate().substring(0, 10));
+//                        } catch (Exception e) {
+//                            System.out.println("Exception occurred during date parsing date: " + fact.getFuneralReservationDate().substring(0, 10));
+//                        }
+//                        funeralsReservationDates.put(fact.getFuneralId(), reservationDate);
+//                    }
+//                    if (!funeralsPurchaseDates.containsKey(fact.getFuneralId()) && fact.getFuneralPurchaseDate() != null) {
+//                        Date purchaseDate = new Date();
+//                        try {
+//                        purchaseDate = new SimpleDateFormat("yyyy-MM-dd").parse(fact.getFuneralPurchaseDate().substring(0, 10));
+//                        } catch (Exception e) {
+//                            System.out.println("Exception occurred during date parsing date: " + fact.getFuneralReservationDate().substring(0, 10));
+//                        }
+//                        funeralsPurchaseDates.put(fact.getFuneralId(), purchaseDate);
+//                    }
+//                    return null;
+//                });
 
         for (String id: funeralsReservationDates.keySet()) {
             if (funeralsPurchaseDates.containsKey(id)) {
@@ -506,28 +631,51 @@ public class FactServiceImpl implements FactService {
         HashMap<String, Date> gravesPurchaseDates = new HashMap<>();
         HashMap<String, Long> gravesReservationToPurchaseTime = new HashMap<>();
 
-        factRepository.findAll().stream()
-                .map(fact -> {
-                    if (!gravesReservationDates.containsKey(fact.getGraveId()) && fact.getGraveReservationDate() != null) {
-                        Date reservationDate = new Date();
-                        try {
-                        reservationDate = new SimpleDateFormat("yyyy-MM-dd").parse(fact.getGraveReservationDate().substring(0, 10));
-                        } catch (Exception e) {
-                            System.out.println("Exception occurred during date parsing date: " + fact.getFuneralReservationDate().substring(0, 10));
-                        }
-                        gravesReservationDates.put(fact.getGraveId(), reservationDate);
-                    }
-                    if (!gravesPurchaseDates.containsKey(fact.getGraveId()) && fact.getGravePurchaseDate() != null) {
-                        Date purchaseDate = new Date();
-                        try {
-                        purchaseDate = new SimpleDateFormat("yyyy-MM-dd").parse(fact.getGravePurchaseDate().substring(0, 10));
-                        } catch (Exception e) {
-                            System.out.println("Exception occurred during date parsing date: " + fact.getFuneralReservationDate().substring(0, 10));
-                        }
-                        gravesPurchaseDates.put(fact.getGraveId(), purchaseDate);
-                    }
-                    return null;
-                });
+        FactListDTO factDTOList = getAllFacts();
+
+        for (FactDTO factDTO: factDTOList.getFacts()) {
+            if (!gravesReservationDates.containsKey(factDTO.getGraveId()) && factDTO.getGraveReservationDate() != null) {
+                Date reservationDate = new Date();
+                try {
+                    reservationDate = new SimpleDateFormat("yyyy-MM-dd").parse(factDTO.getGraveReservationDate().substring(0, 10));
+                } catch (Exception e) {
+                    System.out.println("Exception occurred during date parsing date: " + factDTO.getFuneralReservationDate().substring(0, 10));
+                }
+                gravesReservationDates.put(factDTO.getGraveId(), reservationDate);
+            }
+            if (!gravesPurchaseDates.containsKey(factDTO.getGraveId()) && factDTO.getGravePurchaseDate() != null) {
+                Date purchaseDate = new Date();
+                try {
+                    purchaseDate = new SimpleDateFormat("yyyy-MM-dd").parse(factDTO.getGravePurchaseDate().substring(0, 10));
+                } catch (Exception e) {
+                    System.out.println("Exception occurred during date parsing date: " + factDTO.getFuneralReservationDate().substring(0, 10));
+                }
+                gravesPurchaseDates.put(factDTO.getGraveId(), purchaseDate);
+            }
+        }
+
+//        factRepository.findAll().stream()
+//                .map(fact -> {
+//                    if (!gravesReservationDates.containsKey(fact.getGraveId()) && fact.getGraveReservationDate() != null) {
+//                        Date reservationDate = new Date();
+//                        try {
+//                        reservationDate = new SimpleDateFormat("yyyy-MM-dd").parse(fact.getGraveReservationDate().substring(0, 10));
+//                        } catch (Exception e) {
+//                            System.out.println("Exception occurred during date parsing date: " + fact.getFuneralReservationDate().substring(0, 10));
+//                        }
+//                        gravesReservationDates.put(fact.getGraveId(), reservationDate);
+//                    }
+//                    if (!gravesPurchaseDates.containsKey(fact.getGraveId()) && fact.getGravePurchaseDate() != null) {
+//                        Date purchaseDate = new Date();
+//                        try {
+//                        purchaseDate = new SimpleDateFormat("yyyy-MM-dd").parse(fact.getGravePurchaseDate().substring(0, 10));
+//                        } catch (Exception e) {
+//                            System.out.println("Exception occurred during date parsing date: " + fact.getFuneralReservationDate().substring(0, 10));
+//                        }
+//                        gravesPurchaseDates.put(fact.getGraveId(), purchaseDate);
+//                    }
+//                    return null;
+//                });
 
         for (String id: gravesReservationDates.keySet()) {
             if (gravesPurchaseDates.containsKey(id)) {
@@ -613,12 +761,12 @@ public class FactServiceImpl implements FactService {
         // average number of deceased per Grave
         Double averageDeceasedPerGrave = getAverage(deceasedPerGrave);
 
-        graveReportDTO.setAverageGravesPerYear(averageDeceasedPerGrave);
+        graveReportDTO.setAverageDeceasedPerGrave(averageDeceasedPerGrave);
 
         // median of number of deceased per Grave
         Double medianDeceasedPerGrave = getMedian(deceasedPerGrave);
 
-        graveReportDTO.setMedianGravesPerYear(medianDeceasedPerGrave);
+        graveReportDTO.setMedianDeceasedPerGrave(medianDeceasedPerGrave);
 
         // mode of number of deceased per Grave
         mode = getMode(deceasedPerGrave);

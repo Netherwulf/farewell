@@ -128,7 +128,7 @@ public class DummyData implements ApplicationListener<ContextRefreshedEvent> {
         }
 
         // create facts without funeral directors
-        for (int factIndex = 6; factIndex < 10; factIndex++) {
+        for (int factIndex = 6; factIndex < 30; factIndex++) {
             Fact fact = createFact(factList.size(), surnames, names, cities, r);
 
             fact.setFuneralDirector(null);
