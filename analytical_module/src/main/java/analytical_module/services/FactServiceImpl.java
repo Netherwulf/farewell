@@ -22,6 +22,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
@@ -187,6 +189,8 @@ public class FactServiceImpl implements FactService {
                 .average()
                 .orElse(0);
 
+        averageFuneralsPerDateLength = new BigDecimal(averageFuneralsPerDateLength).setScale(3, RoundingMode.HALF_UP).doubleValue();
+
         return averageFuneralsPerDateLength;
     }
 
@@ -208,6 +212,8 @@ public class FactServiceImpl implements FactService {
         Double medianFuneralsPerDateLength = funeralsCountByDateLength.size()%2 == 0?
                 funeralsPerDateLengthSorted.skip(funeralsCountByDateLength.size()/2-1).limit(2).average().getAsDouble():
                 funeralsPerDateLengthSorted.skip(funeralsCountByDateLength.size()/2).findFirst().getAsDouble();
+
+        medianFuneralsPerDateLength = new BigDecimal(medianFuneralsPerDateLength).setScale(3, RoundingMode.HALF_UP).doubleValue();
 
         return medianFuneralsPerDateLength;
     }
@@ -526,6 +532,8 @@ public class FactServiceImpl implements FactService {
                 .average()
                 .orElse(0);
 
+        averageReservationToPurchaseTime = new BigDecimal(averageReservationToPurchaseTime).setScale(3, RoundingMode.HALF_UP).doubleValue();
+
         funeralReportDTO.setAverageReservationToPurchaseTime(averageReservationToPurchaseTime);
 
         // average number of funerals per day
@@ -699,6 +707,8 @@ public class FactServiceImpl implements FactService {
                 .mapToDouble(Long::doubleValue)
                 .average()
                 .orElse(0);
+
+        averageReservationToPurchaseTime = new BigDecimal(averageReservationToPurchaseTime).setScale(3, RoundingMode.HALF_UP).doubleValue();
 
         graveReportDTO.setAverageReservationToPurchaseTime(averageReservationToPurchaseTime);
 
