@@ -117,15 +117,46 @@ public class FactServiceImpl implements FactService {
     public FactDTO saveAndReturnDTO(FactDTO factDTO) {
         Fact fact = factMapper.factDTOToFact(factDTO);
 
+        Fact savedFact = new Fact();
+
         if (factDTO.getFuneralDirectorId() != null) {
             Optional<FuneralDirector> funeralDirectorOptional = funeralDirectorRepository.findById(factDTO.getFuneralDirectorId());
 
-            if (!funeralDirectorOptional.isPresent()) {
-                fact.setFuneralDirector(funeralDirectorOptional.get());
-            }
-        }
+            if (funeralDirectorOptional.isPresent()) {
+                FuneralDirector funeralDirector = funeralDirectorOptional.get();
+                fact.setFuneralDirector(funeralDirector);
+                funeralDirector.getFacts().add(fact);
 
-        Fact savedFact = factRepository.save(fact);
+                FuneralDirector savedFuneralDirector = funeralDirectorRepository.save(funeralDirector);
+
+                Optional<Fact> savedFactOptional = savedFuneralDirector
+                        .getFacts()
+                        .stream()
+                        .filter(factElem -> factElem.getGraveId().equals(factDTO.getGraveId()))
+                        .filter(factElem -> factElem.getGraveReservationDate().equals(factDTO.getGraveReservationDate()))
+                        .filter(factElem -> factElem.getGraveNumber().equals(factDTO.getGraveNumber()))
+                        .filter(factElem -> factElem.getGraveCoordinates().equals(factDTO.getGraveCoordinates()))
+                        .filter(factElem -> factElem.getGraveCapacity().equals(factDTO.getGraveCapacity()))
+                        .filter(factElem -> factElem.getDeceasedId().equals(factDTO.getDeceasedId()))
+                        .filter(factElem -> factElem.getDeceasedSurname().equals(factDTO.getDeceasedSurname()))
+                        .filter(factElem -> factElem.getDeceasedName().equals(factDTO.getDeceasedName()))
+                        .filter(factElem -> factElem.getDeceasedDateOfBirth().equals(factDTO.getDeceasedDateOfBirth()))
+                        .filter(factElem -> factElem.getDeceasedPlaceOfBirth().equals(factDTO.getDeceasedPlaceOfBirth()))
+                        .filter(factElem -> factElem.getDeceasedDateOfDeath().equals(factDTO.getDeceasedDateOfDeath()))
+                        .filter(factElem -> factElem.getDeceasedPlaceOfDeath().equals(factDTO.getDeceasedPlaceOfDeath()))
+                        .filter(factElem -> factElem.getCreationDate().equals(factDTO.getCreationDate()))
+                        .filter(factElem -> factElem.getUserId().equals(factDTO.getUserId()))
+                        .findFirst();
+
+                if (savedFactOptional.isPresent()) {
+                    savedFact = savedFactOptional.get();
+                }
+            } else {
+                savedFact = factRepository.save(fact);
+            }
+        } else {
+            savedFact = factRepository.save(fact);
+        }
 
         FactDTO returnDTO = factMapper.factToFactDTO(savedFact);
 

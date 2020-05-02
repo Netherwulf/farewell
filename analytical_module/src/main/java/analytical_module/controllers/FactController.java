@@ -22,7 +22,7 @@ public class FactController {
         return factService.getAllFacts();
     }
 
-    @GetMapping("/funeralDirector/{funeralDirectorId}/facts")
+    @GetMapping("/funeralDirectors/{funeralDirectorId}/facts")
     public ResponseEntity getFactsByFuneralDirectorId(@PathVariable Long funeralDirectorId) {
         return factService.getFactsByFuneralDirectorId(funeralDirectorId);
     }
