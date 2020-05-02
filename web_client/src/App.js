@@ -1,5 +1,6 @@
 import React from 'react';
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Layout from './hoc/Layout/Layout';
@@ -7,6 +8,8 @@ import Funerals from './components/Funerals/Funerals';
 import Reservations from './components/Reservations/Reservations';
 import Landing from './components/Landing/Landing';
 import Login from './components/Login/Login';
+import Register from './components/Register/Register';
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import * as actions from './store/actions/actionsIndex';
 
 class App extends React.Component {
@@ -16,6 +19,7 @@ class App extends React.Component {
     const nonAuthenticatedRoutes = (
       <Switch>
         <Route path='/login' component={Login} />
+        <Route path='/register' component={Register} />
         <Redirect to='/login' />
       </Switch>
     );
