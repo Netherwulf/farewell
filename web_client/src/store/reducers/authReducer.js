@@ -1,7 +1,7 @@
 import * as actionTypes from 'store/actions/actionTypes';
 
 const initialState = {
-    isAuthenticated: process.env.NODE_ENV === 'production' ? false : true,
+    isAuthenticated: process.env.NODE_ENV === 'production' ? false : false,
     username: null,
     error: null
 }
