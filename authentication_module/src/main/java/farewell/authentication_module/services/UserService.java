@@ -1,11 +1,9 @@
 package farewell.authentication_module.services;
 
 import com.oracle.tools.packager.Log;
-import farewell.authentication_module.api.v1.models.dtoModels.ProfileDTO;
+import farewell.authentication_module.api.v1.models.dtoModels.*;
+import farewell.authentication_module.models.UserType;
 import farewell.authentication_module.repositories.UsersRepository;
-import farewell.authentication_module.api.v1.models.dtoModels.AuthenticationResponseDTO;
-import farewell.authentication_module.api.v1.models.dtoModels.LoginDTO;
-import farewell.authentication_module.api.v1.models.dtoModels.UserDTO;
 import farewell.authentication_module.api.v1.models.mappers.UserMapper;
 import farewell.authentication_module.models.ErrorResponse;
 import farewell.authentication_module.models.User;
@@ -56,6 +54,8 @@ public class UserService implements UserServiceInterface {
         String password = encoder.encode(user.getPassword());
         user.setPassword(password);
 
+        user.setActive(user.getType() == UserType.EMPLOYEE ? false : true);
+
         User sameEmail = usersRepository.findByEmail(userDTO.getEmail());
         if (sameEmail == null) {
             User savedUser = usersRepository.save(user);
@@ -76,6 +76,10 @@ public class UserService implements UserServiceInterface {
             return ResponseEntity.status(INCORRECT_ARGUMENT_CODE).body(new ErrorResponse("Password should be between 8 and 20 characters and contains at least one number.", INCORRECT_ARGUMENT_CODE));
         }
 
+        if (userDTO.getType() == null) {
+            return ResponseEntity.status(INCORRECT_ARGUMENT_CODE).body(new ErrorResponse("User Type is required", INCORRECT_ARGUMENT_CODE));
+        }
+
         UserDTO saved = saveAndReturnUserDTO(userDTO);
 
         if (saved == null) {
@@ -83,9 +87,13 @@ public class UserService implements UserServiceInterface {
         }
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(userDTO.getEmail());
-        String jwt = jwtUtils.generateToken(userDetails);
-        AuthenticationResponseDTO dto = new AuthenticationResponseDTO(jwt);
-        return ResponseEntity.ok(dto);
+        if (((User)userDetails).getActive()) {
+            String jwt = jwtUtils.generateToken(userDetails);
+            AuthenticationResponseDTO dto = new AuthenticationResponseDTO(jwt);
+            return ResponseEntity.ok(dto);
+        } else {
+            return ResponseEntity.ok(new VerificationNeededDTO("Registration completed. Your account should be verified by administrator."));
+        }
     }
 
     @Override
@@ -93,8 +101,13 @@ public class UserService implements UserServiceInterface {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword()));
             UserDetails userDetails = userDetailsService.loadUserByUsername(loginDTO.getEmail());
-            String jwt = jwtUtils.generateToken(userDetails);
-            return ResponseEntity.ok(new AuthenticationResponseDTO(jwt));
+            if (((User)userDetails).getActive()) {
+                String jwt = jwtUtils.generateToken(userDetails);
+                return ResponseEntity.ok(new AuthenticationResponseDTO(jwt));
+            } else {
+                return ResponseEntity.ok(new VerificationNeededDTO("Registration completed. Your account should be verified by administrator."));
+            }
+
         } catch (AuthenticationException exception) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Incorrect email or password", HttpStatus.UNAUTHORIZED.value()));
         }
