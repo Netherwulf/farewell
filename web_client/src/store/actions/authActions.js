@@ -8,7 +8,8 @@ export const login = (email, password) => {
         const url = `http://${authURL}/login`;
         axios.post(url, { email: email, password: password })
             .then(response => {
-                dispatch(onLogin(email));
+                const authToken = response.data.authenticationToken ? response.data.authenticationToken : undefined;
+                dispatch(onLogin(email, authToken));
             })
             .catch(error => {
                 dispatch(onLoginError(error.response));
@@ -16,10 +17,11 @@ export const login = (email, password) => {
     }
 }
 
-const onLogin = (email) => {
+const onLogin = (email, authToken) => {
     return {
         type: actionTypes.AUTH_SUCCESS,
-        email: email
+        email: email,
+        authToken: authToken
     }
 }
 
