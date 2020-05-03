@@ -1,10 +1,6 @@
 package farewell.authentication_module.api.v1.models.dtoModels;
-
-import farewell.authentication_module.models.UserType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Enumerated;
 import javax.validation.constraints.NotBlank;
 
 @Data

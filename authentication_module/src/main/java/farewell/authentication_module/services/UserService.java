@@ -1,6 +1,5 @@
 package farewell.authentication_module.services;
 
-import com.oracle.tools.packager.Log;
 import farewell.authentication_module.api.v1.models.dtoModels.*;
 import farewell.authentication_module.models.UserType;
 import farewell.authentication_module.repositories.UsersRepository;

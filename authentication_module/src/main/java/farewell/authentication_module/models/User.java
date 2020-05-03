@@ -1,6 +1,5 @@
 package farewell.authentication_module.models;
 
-import farewell.authentication_module.api.v1.models.dtoModels.UserTypeDTO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
