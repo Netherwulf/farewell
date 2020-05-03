@@ -2,13 +2,13 @@ import * as actionTypes from 'store/actions/actionTypes';
 import { authURL } from 'common/const';
 import axios from 'axios';
 
-export const login = (username, password) => {
+export const login = (email, password) => {
     return dispatch => {
         dispatch(onLoginStart());
-        const loginUrl = `${authURL}/login`;
-        axios.post(loginUrl, { username: username, password: password })
+        const url = `http://${authURL}/login`;
+        axios.post(url, { email: email, password: password })
             .then(response => {
-                dispatch(onLogin(username));
+                dispatch(onLogin(email));
             })
             .catch(error => {
                 dispatch(onLoginError(error.response));
@@ -16,10 +16,10 @@ export const login = (username, password) => {
     }
 }
 
-const onLogin = (username) => {
+const onLogin = (email) => {
     return {
         type: actionTypes.AUTH_SUCCESS,
-        username: username
+        email: email
     }
 }
 

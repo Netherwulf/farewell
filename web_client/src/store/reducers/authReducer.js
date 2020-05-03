@@ -2,7 +2,7 @@ import * as actionTypes from 'store/actions/actionTypes';
 
 const initialState = {
     isAuthenticated: process.env.NODE_ENV === 'production' ? false : false,
-    username: null,
+    email: null,
     error: null
 }
 
@@ -29,7 +29,7 @@ const authLogin = (state, action) => {
     return {
         ...state,
         isAuthenticated: true,
-        username: action.username,
+        email: action.email,
         isStarted: false
     }
 }
@@ -46,7 +46,7 @@ const authLogout = (state, action) => {
     return {
         ...state,
         isAuthenticated: false,
-        username: null
+        email: null
     }
 }
 
