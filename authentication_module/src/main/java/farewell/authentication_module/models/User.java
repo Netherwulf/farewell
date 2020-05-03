@@ -1,5 +1,6 @@
 package farewell.authentication_module.models;
 
+import farewell.authentication_module.api.v1.models.dtoModels.UserTypeDTO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -27,11 +28,24 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    public User(String email, String firstName, String lastName, String password) {
+    @Column(name = "user_type")
+    @Enumerated(EnumType.STRING)
+    private UserType type;
+
+    @Column(name = "active", nullable = false)
+    private Boolean active = false;
+
+    public User(String email, String firstName, String lastName, String password, UserType type, Boolean active) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
+        this.type = type;
+        this.active = active;
+    }
+
+    public void setType(UserType type) {
+        this.type = type;
     }
 
     public User() { }
@@ -62,6 +76,18 @@ public class User implements UserDetails {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public UserType getType() {
+        return type;
     }
 
     public String getLastName() {

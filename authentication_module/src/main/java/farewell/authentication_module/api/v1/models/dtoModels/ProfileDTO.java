@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotBlank;
 
 @Data
@@ -19,5 +20,9 @@ public class ProfileDTO {
     private String firstName;
     @NotBlank
     private String lastName;
-
+    @NotBlank
+    @Enumerated
+    private UserTypeDTO type;
+    @NotBlank
+    private Boolean active;
 }
