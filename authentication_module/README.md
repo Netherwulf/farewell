@@ -15,7 +15,7 @@
 
 * Building and running with Maven - execute inside farewell/authentication_module directory :
     * mvn package
-    * java -jar target\authentication_module-0.1.0.jar
+    * java -jar target\authentication_module-0.0.1.jar
 
 * Create Docker image and tag it - execute inside farewell/authentication_module directory:
     * docker build -t farewell/authentication_module .

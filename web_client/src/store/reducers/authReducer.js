@@ -1,9 +1,10 @@
 import * as actionTypes from 'store/actions/actionTypes';
 
 const initialState = {
-    isAuthenticated: process.env.NODE_ENV === 'production' ? false : true,
-    username: null,
-    error: null
+    isAuthenticated: process.env.NODE_ENV === 'production' ? false : false,
+    email: null,
+    error: null,
+    authToken: null
 }
 
 const reducer = (state = initialState, action) => {
@@ -29,7 +30,8 @@ const authLogin = (state, action) => {
     return {
         ...state,
         isAuthenticated: true,
-        username: action.username,
+        email: action.email,
+        authToken: action.authToken,
         isStarted: false
     }
 }
@@ -46,7 +48,8 @@ const authLogout = (state, action) => {
     return {
         ...state,
         isAuthenticated: false,
-        username: null
+        authToken: null,
+        email: null
     }
 }
 
