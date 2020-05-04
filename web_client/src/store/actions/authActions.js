@@ -2,13 +2,14 @@ import * as actionTypes from 'store/actions/actionTypes';
 import { authURL } from 'common/const';
 import axios from 'axios';
 
-export const login = (username, password) => {
+export const login = (email, password) => {
     return dispatch => {
         dispatch(onLoginStart());
-        const loginUrl = `${authURL}/login`;
-        axios.post(loginUrl, { username: username, password: password })
+        const url = `http://${authURL}/login`;
+        axios.post(url, { email: email, password: password })
             .then(response => {
-                dispatch(onLogin(username));
+                const authToken = response.data.authenticationToken ? response.data.authenticationToken : undefined;
+                dispatch(onLogin(email, authToken));
             })
             .catch(error => {
                 dispatch(onLoginError(error.response));
@@ -16,10 +17,11 @@ export const login = (username, password) => {
     }
 }
 
-const onLogin = (username) => {
+const onLogin = (email, authToken) => {
     return {
         type: actionTypes.AUTH_SUCCESS,
-        username: username
+        email: email,
+        authToken: authToken
     }
 }
 

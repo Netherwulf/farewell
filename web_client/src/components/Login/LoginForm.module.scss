@@ -1,0 +1,49 @@
+@import "./src/assets/scss/variables";
+
+.authWrapper {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: left;
+}
+
+.authInner {
+    color: $basicHeaderText;
+    width: 380px;
+    margin: auto;
+    padding: 40px 55px 45px 55px;
+    border-radius: 15px;
+    transition: all .3s;
+    background: $backgroundDark;
+
+    @media (max-width: 580px) {
+        width: 280px;
+        margin: auto;
+        padding: 20px 30px 30px 30px;
+    }
+}
+
+.authWrapper .form-control:focus {
+    border-color: $backgroundDark;
+    box-shadow: none;
+}
+
+.authWrapper .btn-primary {
+    background-color: $backgroundDark;
+    background-color: $backgroundDark;
+}
+
+.authWrapper h2 {
+    padding-bottom: 10px;
+}
+
+.register,
+.register a {
+    text-align: right;
+    padding-top: 10px;
+    margin: 0;
+}
+
+.register a {
+    color: whitesmoke;
+}
