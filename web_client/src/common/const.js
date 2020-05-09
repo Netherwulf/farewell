@@ -1,1 +1,1 @@
-export const authURL = 'localhost:8080';
+export const authURL = 'localhost:7000';
