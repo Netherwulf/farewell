@@ -1,11 +1,17 @@
 import axios from 'axios';
 import * as util from 'api/REST/utility';
-import { authURL } from 'common/const';
+import { authURL, reservationURL } from 'common/const';
 
 export const postUser = async (userObject) => {
     const url = `http://${authURL}/register`;
     const response = await post(url, userObject);
     return response;
+}
+
+export const getFunerals = async () => {
+    const url = `http://${reservationURL}/funerals`;
+    const response = await get(url);
+    return response ? response.funerals : null;
 }
 
 export const post = async (url, object) => {
@@ -18,6 +24,18 @@ export const post = async (url, object) => {
         .catch(error => {
             console.log('ERROR: ', error.response);
             return error.response.data;
+        });
+}
+
+export const get = async (url) => {
+    const config = { headers: [] };
+    config.headers["Content-Type"] = 'application/json';
+    return await axios.get(url, config)
+        .then(response => {
+            return response.data;
+        })
+        .catch(error => {
+            console.log('ERROR: ', error.response);
         });
 }
 
