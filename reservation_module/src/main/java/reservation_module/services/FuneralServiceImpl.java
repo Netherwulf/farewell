@@ -1,13 +1,17 @@
 package reservation_module.services;
 
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.client.RestTemplate;
 import reservation_module.api.v1.mapper.FuneralMapper;
 import reservation_module.api.v1.mapper.GraveMapper;
 import reservation_module.api.v1.model.DeceasedDTO;
 import reservation_module.api.v1.model.FuneralDTO;
+import reservation_module.api.v1.model.FuneralDirectorListDTO;
 import reservation_module.api.v1.model.FuneralListDTO;
 import reservation_module.exceptions.ResourceNotFoundException;
 import reservation_module.models.Deceased;
@@ -18,10 +22,8 @@ import reservation_module.repositories.FuneralRepository;
 import reservation_module.repositories.GraveRepository;
 
 import javax.transaction.Transactional;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.net.URI;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -45,6 +47,11 @@ public class FuneralServiceImpl implements FuneralService {
 
     @Override
     public FuneralListDTO getAllFunerals() {
+        final String uri = "http://analyticalModule:8081/funeralDirectors";
+
+        RestTemplate restTemplate = new RestTemplate();
+        FuneralDirectorListDTO result = restTemplate.getForObject(uri, FuneralDirectorListDTO.class, new HashMap<>());
+
         List<FuneralDTO> funeralDTOs = funeralRepository
                 .findAll()
                 .stream()
@@ -58,15 +65,31 @@ public class FuneralServiceImpl implements FuneralService {
                             }
                         }
                     }
+                    if (funeralDTO.getFuneralDirectorId() != null) {
+                        funeralDTO.setFuneralDirector(result.getFuneralDirectors().get(Integer.parseInt(funeralDTO.getFuneralDirectorId())));
+                    }
                     return funeralDTO;
                 })
                 .collect(Collectors.toList());
+
+//        URI thirdPartyApi = new URI("http", null, "http://reservation_module", 8081, "/funeralDirectors", request.getQueryString(), null);
+//
+//        ResponseEntity<FuneralDirectorListDTO> resp =
+//                restTemplate.exchange("http://analytical_module:8081/funeralDirectors", HttpMethod.GET, null, FuneralDirectorListDTO, null);
+//
+//        return resp.getBody();
+
         return new FuneralListDTO(funeralDTOs);
     }
 
     @Override
     public ResponseEntity getFuneralById(Long funeralId) {
         Optional<Funeral> funeralOptional = funeralRepository.findById(funeralId);
+
+        final String uri = "http://analyticalModule:8081/funeralDirectors";
+
+        RestTemplate restTemplate = new RestTemplate();
+        FuneralDirectorListDTO result = restTemplate.getForObject(uri, FuneralDirectorListDTO.class, new HashMap<>());
 
         if (!funeralOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Funeral not found for id: " + funeralId.toString());
@@ -81,6 +104,9 @@ public class FuneralServiceImpl implements FuneralService {
                     deceasedDTO.setGraveId(funeralDTO.getGrave().getId());
                 }
             }
+        }
+        if (funeralDTO.getFuneralDirectorId() != null) {
+            funeralDTO.setFuneralDirector(result.getFuneralDirectors().get(Integer.parseInt(funeralDTO.getFuneralDirectorId())));
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(funeralDTO);

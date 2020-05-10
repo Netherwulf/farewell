@@ -38,7 +38,7 @@ public class DummyData implements ApplicationListener<ContextRefreshedEvent> {
         funeralOne.setReservationDate("2012-05-03 22:15:10-00");
         funeralOne.setDate("2012-06-12 10:15:00-00");
         funeralOne.setUserId("25");
-        funeralOne.setFuneralDirectorId("30");
+        funeralOne.setFuneralDirectorId("1");
 
         // create grave for first funeral
         Grave graveOne = new Grave();
@@ -81,7 +81,7 @@ public class DummyData implements ApplicationListener<ContextRefreshedEvent> {
         funeralTwo.setReservationDate("2007-07-17 23:22:31-00");
         funeralTwo.setDate("2007-08-23 12:45:00-00");
         funeralTwo.setUserId("26");
-        funeralTwo.setFuneralDirectorId("31");
+        funeralTwo.setFuneralDirectorId("1");
 
         // create grave for second funeral
         Grave graveTwo = new Grave();
@@ -113,7 +113,7 @@ public class DummyData implements ApplicationListener<ContextRefreshedEvent> {
         funeralThree.setReservationDate("2014-05-13 17:29:39-00");
         funeralThree.setDate("2014-07-22 15:30:00-00");
         funeralThree.setUserId("27");
-        funeralThree.setFuneralDirectorId("32");
+        funeralThree.setFuneralDirectorId("2");
 
         // save third funeral
         funeralList.add(funeralThree);

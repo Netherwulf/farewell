@@ -19,8 +19,9 @@ public class FuneralDTO {
     @NotBlank
     private String date;
 
-    @NotBlank
     private String funeralDirectorId;
+
+    private FuneralDirectorDTO funeralDirector;
 
     @NotBlank
     private String userId;
