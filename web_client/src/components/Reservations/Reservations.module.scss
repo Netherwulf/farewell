@@ -2,4 +2,30 @@
 .container {
     display: flex;
     justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.buttonArea {
+    padding: 20px;
+}
+
+.calendarContainer {
+    height: 600px;
+    width: 800px;
+
+    @media (max-width: 820px) {
+        height: 600px;
+        width: 600px;
+    }
+
+    @media (max-width: 620px) {
+        height: 600px;
+        width: 300px;
+    }
+
+    @media (max-width: 420px) {
+        height: 600px;
+        width: 300px;
+    }
 }

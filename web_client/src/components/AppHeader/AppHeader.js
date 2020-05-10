@@ -10,7 +10,7 @@ function AppHeader(props) {
       <div className={styles.tabGroup}>
         <span className={styles.headerTitle} onClick={() => {props.history.push("/")}}><span role="img" aria-label="Icon">⚰️</span><span>Farewell</span></span>
         <div className={props.history.location.pathname === '/funerals' ? styles.tabActive : styles.tab} onClick={() => {props.history.push("/funerals")}}>Funerals</div>
-        <div className={props.history.location.pathname === '/reservations' ? styles.tabActive : styles.tab } onClick={() => {props.history.push("/reservations")}} >Reservations</div>
+        <div className={(props.history.location.pathname === '/reservations' || props.history.location.pathname === '/reserve') ? styles.tabActive : styles.tab } onClick={() => {props.history.push("/reservations")}} >Reservations</div>
       </div>
       <div className={styles.tabGroup}>
         { props.isAuthenticated ? 

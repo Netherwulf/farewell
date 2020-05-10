@@ -7,6 +7,13 @@ services:
       - 7000:8080
     depends_on:
       - db
+  web_client:
+    container_name: "farewell_web_client"
+    image: "web_client:latest"
+    ports:
+      - 3000:80
+    depends_on:
+      - authentication_module
   reservation_module:
     container_name: "farewell_reservation_module"
     image: "farewell/reservation_module:latest"

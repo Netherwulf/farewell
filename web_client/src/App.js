@@ -6,6 +6,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Layout from './hoc/Layout/Layout';
 import Funerals from './components/Funerals/Funerals';
 import Reservations from './components/Reservations/Reservations';
+import Reserve from './components/Reserve/Reserve';
 import Landing from './components/Landing/Landing';
 import Login from './components/Login/Login';
 import Register from './components/Register/Register';
@@ -20,6 +21,8 @@ class App extends React.Component {
       <Switch>
         <Route path='/login' component={Login} />
         <Route path='/register' component={Register} />
+        <Route path='/funerals' component={Funerals} />
+        <Route path='/reservations' component={Reservations} />
         <Redirect to='/login' />
       </Switch>
     );
@@ -28,6 +31,7 @@ class App extends React.Component {
       <Switch>
         <Route path='/funerals' component={Funerals} />
         <Route path='/reservations' component={Reservations} />
+        <Route path='/reserve' component={Reserve} />
         <Route path='/my-reservations' component={Reservations} />
         <Route path='/logout' component={Landing} />
         <Route path='/' exact component={Landing} />

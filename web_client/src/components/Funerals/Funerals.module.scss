@@ -1,5 +1,9 @@
-
 .container {
     display: flex;
     justify-content: center;
+}
+
+.funeralList {
+    display: flex;
+    flex-direction: column;
 }
