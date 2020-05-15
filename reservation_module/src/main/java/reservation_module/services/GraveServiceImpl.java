@@ -1,13 +1,22 @@
 package reservation_module.services;
 
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import reservation_module.api.v1.mapper.DeceasedMapper;
 import reservation_module.api.v1.mapper.FuneralMapper;
 import reservation_module.api.v1.mapper.GraveMapper;
 import reservation_module.api.v1.model.DeceasedDTO;
+import reservation_module.api.v1.model.FactDTO;
 import reservation_module.api.v1.model.GraveDTO;
 import reservation_module.api.v1.model.GraveListDTO;
 import reservation_module.exceptions.NotFoundException;
@@ -20,6 +29,8 @@ import reservation_module.repositories.FuneralRepository;
 import reservation_module.repositories.GraveRepository;
 
 import javax.transaction.Transactional;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -151,7 +162,7 @@ public class GraveServiceImpl implements GraveService {
 
     @Override
     public GraveDTO createNewGrave(GraveDTO graveDTO) {
-        return saveAndReturnDTO(graveMapper.graveDTOToGrave(graveDTO));
+        return saveAndReturnDTO(graveMapper.graveDTOToGrave(graveDTO), graveDTO.getUserId());
     }
 
     @Override
@@ -264,13 +275,13 @@ public class GraveServiceImpl implements GraveService {
                     if (graveDTO.getFuneralId() != null) {
                         grave.setFuneral(funeralRepository.findById(graveDTO.getFuneralId()).get());
                     }
-                    return saveAndReturnDTO(grave);
+                    return saveAndReturnDTO(grave, graveDTO.getUserId());
                 }));
     }
 
     @Override
     @Transactional
-    public GraveDTO saveAndReturnDTO(Grave grave) {
+    public GraveDTO saveAndReturnDTO(Grave grave, Long userId) {
         Grave savedGrave = graveRepository.save(grave);
 
         if (!Objects.equals(grave.getDeceased(), new HashSet<>())) {
@@ -289,6 +300,64 @@ public class GraveServiceImpl implements GraveService {
         }
         if (grave.getFuneral() != null) {
             returnDTO.setFuneralId(grave.getFuneral().getId());
+        }
+
+        // send POST requests to the Analytical Module for each deceased in grave
+        String createPersonUrl = "http://analyticalModule:8081/facts";
+
+        for (Deceased deceased: grave.getDeceased()) {
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters()
+                    .add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            JSONObject factJsonObject = new JSONObject();
+
+            try {
+
+                // funeral data
+                if (grave.getFuneral() != null) {
+                    Funeral funeral = grave.getFuneral();
+                    factJsonObject.put("funeralId", funeral.getId());
+                    factJsonObject.put("funeralReservationDate", funeral.getReservationDate());
+                    factJsonObject.put("funeralPurchaseDate", null);
+                    factJsonObject.put("funeralDate", funeral.getDate());
+                } else {
+                    factJsonObject.put("funeralId", null);
+                    factJsonObject.put("funeralReservationDate", null);
+                    factJsonObject.put("funeralPurchaseDate", null);
+                    factJsonObject.put("funeralDate", null);
+                }
+
+                // grave data
+                factJsonObject.put("graveId", grave.getId());
+                factJsonObject.put("graveReservationDate", grave.getReservationDate());
+                factJsonObject.put("gravePurchaseDate", null);
+                factJsonObject.put("graveNumber", grave.getGraveNumber());
+                factJsonObject.put("graveCoordinates", grave.getCoordinates());
+                factJsonObject.put("graveCapacity", grave.getCapacity());
+
+                // deceased data
+                factJsonObject.put("deceasedId", deceased.getId());
+                factJsonObject.put("deceasedSurname", deceased.getSurname());
+                factJsonObject.put("deceasedName", deceased.getName());
+                factJsonObject.put("deceasedDateOfBirth", deceased.getDateOfBirth());
+                factJsonObject.put("deceasedPlaceOfBirth", deceased.getPlaceOfBirth());
+                factJsonObject.put("deceasedDateOfDeath", deceased.getDateOfDeath());
+                factJsonObject.put("deceasedPlaceOfDeath", deceased.getPlaceOfDeath());
+
+                // creation date and user id
+                factJsonObject.put("creationDate", new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
+                factJsonObject.put("userId", userId);
+            } catch (JSONException e) {
+                System.out.println("Exception occured: " + e.toString());
+            }
+
+            HttpEntity<String> request =
+                    new HttpEntity<String>(factJsonObject.toString(), headers);
+
+            FactDTO personResultAsJsonStr =
+                    restTemplate.postForObject(createPersonUrl, request, FactDTO.class);
         }
 
         return returnDTO;

@@ -22,7 +22,7 @@ public interface GraveService {
 
     ResponseEntity patchGrave(GraveDTO graveDTO);
 
-    GraveDTO saveAndReturnDTO(Grave grave);
+    GraveDTO saveAndReturnDTO(Grave grave, Long userId);
 
     public ResponseEntity deleteGraveById(Long id);
 
