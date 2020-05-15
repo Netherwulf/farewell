@@ -236,6 +236,64 @@ public class GraveServiceImpl implements GraveService {
             returnDTO.setFuneralId(grave.getFuneral().getId());
         }
 
+        // send POST requests to the Analytical Module for each deceased in grave
+        String createPersonUrl = "http://analyticalModule:8081/facts";
+
+        for (Deceased deceased: grave.getDeceased()) {
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters()
+                    .add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            JSONObject factJsonObject = new JSONObject();
+
+            try {
+
+                // funeral data
+                if (grave.getFuneral() != null) {
+                    Funeral funeral = grave.getFuneral();
+                    factJsonObject.put("funeralId", funeral.getId());
+                    factJsonObject.put("funeralReservationDate", funeral.getReservationDate());
+                    factJsonObject.put("funeralPurchaseDate", null);
+                    factJsonObject.put("funeralDate", funeral.getDate());
+                } else {
+                    factJsonObject.put("funeralId", null);
+                    factJsonObject.put("funeralReservationDate", null);
+                    factJsonObject.put("funeralPurchaseDate", null);
+                    factJsonObject.put("funeralDate", null);
+                }
+
+                // grave data
+                factJsonObject.put("graveId", grave.getId());
+                factJsonObject.put("graveReservationDate", grave.getReservationDate());
+                factJsonObject.put("gravePurchaseDate", null);
+                factJsonObject.put("graveNumber", grave.getGraveNumber());
+                factJsonObject.put("graveCoordinates", grave.getCoordinates());
+                factJsonObject.put("graveCapacity", grave.getCapacity());
+
+                // deceased data
+                factJsonObject.put("deceasedId", deceased.getId());
+                factJsonObject.put("deceasedSurname", deceased.getSurname());
+                factJsonObject.put("deceasedName", deceased.getName());
+                factJsonObject.put("deceasedDateOfBirth", deceased.getDateOfBirth());
+                factJsonObject.put("deceasedPlaceOfBirth", deceased.getPlaceOfBirth());
+                factJsonObject.put("deceasedDateOfDeath", deceased.getDateOfDeath());
+                factJsonObject.put("deceasedPlaceOfDeath", deceased.getPlaceOfDeath());
+
+                // creation date and user id
+                factJsonObject.put("creationDate", new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
+                factJsonObject.put("userId", returnDTO.getUserId());
+            } catch (JSONException e) {
+                System.out.println("Exception occured: " + e.toString());
+            }
+
+            HttpEntity<String> request =
+                    new HttpEntity<String>(factJsonObject.toString(), headers);
+
+            FactDTO personResultAsJsonStr =
+                    restTemplate.postForObject(createPersonUrl, request, FactDTO.class);
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(returnDTO);
     }
 
