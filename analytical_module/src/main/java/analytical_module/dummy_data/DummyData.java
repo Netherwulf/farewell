@@ -22,16 +22,16 @@ public class DummyData implements ApplicationListener<ContextRefreshedEvent> {
     }
 
     private FuneralDirector createFuneralDirector(int funeralDirectorIndex, List<String> surnames, List<String> names,
-                                                  List<String> religions, List<String> emails) {
+                                                  List<String> religions, List<String> emails, Random r) {
         FuneralDirector funeralDirector = new FuneralDirector();
 
-        funeralDirector.setSurname(surnames.get(funeralDirectorIndex));
-        funeralDirector.setName(names.get(funeralDirectorIndex));
-        funeralDirector.setDateOfBirth((new Integer(1970 + funeralDirectorIndex)).toString() + "-0"
-                + (new Integer(1 + funeralDirectorIndex)).toString() + "-"
-                + (new Integer(10 + funeralDirectorIndex)).toString());
+        funeralDirector.setSurname(surnames.get(r.nextInt(funeralDirectorIndex) % surnames.size()));
+        funeralDirector.setName(names.get(r.nextInt(funeralDirectorIndex) % surnames.size()));
+        funeralDirector.setDateOfBirth((new Integer(1970 + r.nextInt(funeralDirectorIndex) % 20)).toString() + "-0"
+                + (new Integer(1 + r.nextInt(funeralDirectorIndex) % 10)).toString() + "-"
+                + (new Integer(10 + r.nextInt(funeralDirectorIndex) % 19)).toString());
         funeralDirector.setReligion(religions.get(funeralDirectorIndex % 7));
-        funeralDirector.setEmail((names.get(funeralDirectorIndex)).toLowerCase() + emails.get(funeralDirectorIndex % 6));
+        funeralDirector.setEmail((names.get(funeralDirectorIndex % names.size())).toLowerCase() + emails.get(funeralDirectorIndex % 6));
 
         return funeralDirector;
     }
@@ -39,14 +39,16 @@ public class DummyData implements ApplicationListener<ContextRefreshedEvent> {
     private Fact createFact(int factIndex, List<String> surnames, List<String> names, List<String> cities, Random r) {
         Fact fact = new Fact();
 
-        fact.setFuneralId(Integer.toString(factIndex + 900));
-        fact.setFuneralReservationDate(2020 + "-0" + ((1 + factIndex) % 8) + "-" + (10 + factIndex));
-        fact.setFuneralPurchaseDate(2020 + "-0" + (((1 + factIndex) % 8) + 1) + "-" + (11 + factIndex));
-        fact.setFuneralDate(2020 + "-0" + (((1 + factIndex) % 8) + 2) + "-" + (11 + factIndex));
+        int reservationDate = 2017 + r.nextInt(4);
 
-        fact.setGraveId(Integer.toString(factIndex + 1000));
-        fact.setGraveReservationDate(2019 + "-0" + ((1 + factIndex) % 8) + "-" + (10 + factIndex));
-        fact.setGravePurchaseDate(2019 + "-0" + (((1 + factIndex) % 8) + 1) + "-" + (11 + factIndex));
+        fact.setFuneralId(Integer.toString(factIndex + 900));
+        fact.setFuneralReservationDate(reservationDate + "-0" + ((1 + factIndex) % 8) + "-" + (10 + factIndex));
+        fact.setFuneralPurchaseDate(reservationDate + "-0" + (((1 + factIndex) % 8) + 1) + "-" + (11 + factIndex));
+        fact.setFuneralDate(reservationDate + "-0" + (((1 + factIndex) % 8) + 2) + "-" + (11 + factIndex));
+
+        fact.setGraveId(Integer.toString(r.nextInt(1 + factIndex % 200) + 1000));
+        fact.setGraveReservationDate((reservationDate - 1)  + "-0" + ((1 + factIndex) % 8) + "-" + (10 + factIndex));
+        fact.setGravePurchaseDate((reservationDate - 1) + "-0" + (((1 + factIndex) % 8) + 1) + "-" + (11 + factIndex));
         fact.setGraveNumber(Integer.toString(factIndex + 50));
         fact.setGraveCoordinates((39 + (factIndex % 5)) + "-" + (20 + (factIndex % 10)) + "-" + (10 + (factIndex % 5)) +
                 "." + ((1 + factIndex) % 5) + "-N " + ((1 + factIndex) % 6) + "-" + ((2 + factIndex) % 12) + "-" +
@@ -62,7 +64,7 @@ public class DummyData implements ApplicationListener<ContextRefreshedEvent> {
         fact.setDeceasedPlaceOfDeath(cities.get((3 + r.nextInt(factIndex + 1)) % 8));
 
         fact.setCreationDate(2018 + "-0" + ((1 + factIndex) % 8) + "-" + (10 + factIndex));
-        fact.setUserId(Integer.toString( 40 + r.nextInt(40 + factIndex)));
+        fact.setUserId(Integer.toString( 40 + r.nextInt(60 + factIndex % 60)));
 
         return fact;
     }
@@ -97,14 +99,14 @@ public class DummyData implements ApplicationListener<ContextRefreshedEvent> {
         Random r = new Random();
 
         // create facts
-        for (int funeralDirectorIndex = 0; funeralDirectorIndex < 3; funeralDirectorIndex++) {
-            FuneralDirector funeralDirector = createFuneralDirector(funeralDirectorIndex, surnames, names, religions, emails);
+        for (int funeralDirectorIndex = 1; funeralDirectorIndex < 30; funeralDirectorIndex++) {
+            FuneralDirector funeralDirector = createFuneralDirector(funeralDirectorIndex, surnames, names, religions, emails, r);
 
             Set<Fact> factSet = new HashSet<>();
 
-            int factsCount = r.nextInt(2) + 1;
+            int factsCount = r.nextInt(40) + 15;
 
-            for (int factIndex = 0; factIndex < factsCount; factIndex++) {
+            for (int factIndex = 1; factIndex < factsCount; factIndex++) {
                 Fact fact = createFact(factList.size(), surnames, names, cities, r);
 
                 fact.setFuneralDirector(funeralDirector);
@@ -120,7 +122,7 @@ public class DummyData implements ApplicationListener<ContextRefreshedEvent> {
 
         // create funeral directors without facts
         for (int funeralDirectorIndex = 3; funeralDirectorIndex < 6; funeralDirectorIndex++) {
-            FuneralDirector funeralDirector = createFuneralDirector(funeralDirectorIndex, surnames, names, religions, emails);
+            FuneralDirector funeralDirector = createFuneralDirector(funeralDirectorIndex, surnames, names, religions, emails, r);
 
             funeralDirector.setFacts(null);
 
@@ -128,7 +130,7 @@ public class DummyData implements ApplicationListener<ContextRefreshedEvent> {
         }
 
         // create facts without funeral directors
-        for (int factIndex = 6; factIndex < 30; factIndex++) {
+        for (int factIndex = 6; factIndex < 200; factIndex++) {
             Fact fact = createFact(factList.size(), surnames, names, cities, r);
 
             fact.setFuneralDirector(null);
