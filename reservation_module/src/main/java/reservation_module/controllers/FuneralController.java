@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import reservation_module.api.v1.model.FuneralDTO;
 import reservation_module.api.v1.model.FuneralListDTO;
 import reservation_module.services.FuneralService;
+import reservation_module.services.RabbitMQSender;
+
+import java.io.IOException;
 
 @CrossOrigin
 @RestController
@@ -16,8 +19,11 @@ public class FuneralController {
 
     private final FuneralService funeralService;
 
-    public FuneralController(FuneralService funeralService) {
+    private final RabbitMQSender rabbitMQSender;
+
+    public FuneralController(FuneralService funeralService, RabbitMQSender rabbitMQSender) {
         this.funeralService = funeralService;
+        this.rabbitMQSender = rabbitMQSender;
     }
 
     @GetMapping("/funerals")
@@ -32,8 +38,10 @@ public class FuneralController {
 
     @PostMapping("/funerals")
     @ResponseStatus(HttpStatus.CREATED)
-    public FuneralDTO createNewFuneral(@RequestBody FuneralDTO funeralDTO) {
-        return funeralService.createNewFuneral(funeralDTO);
+    public FuneralDTO createNewFuneral(@RequestBody FuneralDTO funeralDTO) throws IOException {
+        FuneralDTO returnDTO = funeralService.createNewFuneral(funeralDTO);
+        rabbitMQSender.send(returnDTO);
+        return returnDTO;
     }
 
     @PutMapping("/funerals")
