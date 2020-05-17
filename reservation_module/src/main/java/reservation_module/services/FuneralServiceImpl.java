@@ -242,6 +242,35 @@ public class FuneralServiceImpl implements FuneralService {
     @Override
     @Transactional
     public FuneralDTO saveAndReturnDTO(Funeral funeral) {
+        // remove empty Grave
+        if (funeral.getGrave() != null) {
+            Grave emptyGrave = funeral.getGrave();
+            List<Grave> graveList = graveRepository
+                    .findAll()
+                    .stream()
+                    .collect(Collectors.toList());
+
+            Grave foundGrave = null;
+
+            for (Grave grave: graveList) {
+                if (Objects.equals(grave.getCoordinates(), emptyGrave.getCoordinates())
+                        && Objects.equals(grave.getUserId(), emptyGrave.getUserId())
+                        && Objects.equals(grave.getCapacity(), emptyGrave.getCapacity())
+                        && Objects.equals(grave.getGraveNumber(), emptyGrave.getGraveNumber())
+                        && Objects.equals(grave.getReservationDate(), emptyGrave.getReservationDate())) {
+                    foundGrave = grave;
+                    break;
+                }
+            }
+
+            if (foundGrave != null) {
+                System.out.println("Found grave! => ID: " + foundGrave.getId());
+                graveRepository.deleteById(foundGrave.getId());
+            } else {
+                System.out.println("Grave not found!");
+            }
+        }
+
         Funeral savedFuneral = funeralRepository.save(funeral);
 
         if (funeral.getGrave() != null) {
