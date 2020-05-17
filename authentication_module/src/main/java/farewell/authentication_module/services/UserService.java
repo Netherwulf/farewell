@@ -88,7 +88,7 @@ public class UserService implements UserServiceInterface {
         UserDetails userDetails = userDetailsService.loadUserByUsername(userDTO.getEmail());
         if (((User)userDetails).getActive()) {
             String jwt = jwtUtils.generateToken(userDetails);
-            AuthenticationResponseDTO dto = new AuthenticationResponseDTO(jwt);
+            AuthenticationResponseDTO dto = new AuthenticationResponseDTO(jwt,((User) userDetails).getId());
             return ResponseEntity.ok(dto);
         } else {
             return ResponseEntity.ok(new VerificationNeededDTO("Registration completed. Your account should be verified by administrator."));
@@ -102,7 +102,7 @@ public class UserService implements UserServiceInterface {
             UserDetails userDetails = userDetailsService.loadUserByUsername(loginDTO.getEmail());
             if (((User)userDetails).getActive()) {
                 String jwt = jwtUtils.generateToken(userDetails);
-                return ResponseEntity.ok(new AuthenticationResponseDTO(jwt));
+                return ResponseEntity.ok(new AuthenticationResponseDTO(jwt, ((User) userDetails).getId()));
             } else {
                 return ResponseEntity.ok(new VerificationNeededDTO("Registration completed. Your account should be verified by administrator."));
             }

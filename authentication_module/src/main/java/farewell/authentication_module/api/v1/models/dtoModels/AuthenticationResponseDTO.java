@@ -10,7 +10,10 @@ public class AuthenticationResponseDTO {
     @NotBlank
     private String authenticationToken;
 
-    public AuthenticationResponseDTO(@NotBlank String authenticationToken) {
+    @NotBlank Long userId;
+
+    public AuthenticationResponseDTO(@NotBlank String authenticationToken, @NotBlank Long userId) {
         this.authenticationToken = authenticationToken;
+        this.userId = userId;
     }
 }
