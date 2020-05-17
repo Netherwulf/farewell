@@ -4,7 +4,8 @@ const initialState = {
     isAuthenticated: process.env.NODE_ENV === 'production' ? false : false,
     email: null,
     error: null,
-    authToken: null
+    authToken: null,
+    userId: null
 }
 
 const reducer = (state = initialState, action) => {
@@ -32,6 +33,7 @@ const authLogin = (state, action) => {
         isAuthenticated: true,
         email: action.email,
         authToken: action.authToken,
+        userId: action.userId,
         isStarted: false
     }
 }
@@ -49,7 +51,8 @@ const authLogout = (state, action) => {
         ...state,
         isAuthenticated: false,
         authToken: null,
-        email: null
+        email: null,
+        userId: null
     }
 }
 
