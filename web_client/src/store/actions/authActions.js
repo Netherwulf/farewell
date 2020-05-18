@@ -9,7 +9,8 @@ export const login = (email, password) => {
         axios.post(url, { email: email, password: password })
             .then(response => {
                 const authToken = response.data.authenticationToken ? response.data.authenticationToken : undefined;
-                dispatch(onLogin(email, authToken));
+                const userId = response.data.userId ? response.data.userId : undefined;
+                dispatch(onLogin(email, authToken, userId));
             })
             .catch(error => {
                 dispatch(onLoginError(error.response));
@@ -17,11 +18,12 @@ export const login = (email, password) => {
     }
 }
 
-const onLogin = (email, authToken) => {
+const onLogin = (email, authToken, userId) => {
     return {
         type: actionTypes.AUTH_SUCCESS,
         email: email,
-        authToken: authToken
+        authToken: authToken,
+        userId: userId
     }
 }
 

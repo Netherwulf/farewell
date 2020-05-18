@@ -6,8 +6,9 @@ export const registerUser = async (userData) => {
         isError: false,
         errorMessage: ''
     };
-    if (response && response.authenticationToken) {
+    if (response && response.authenticationToken && response.userId) {
         const authToken = response.authenticationToken;
+        const userId = response.userId;
     } else {
         result.isError = true;
         if (response)
