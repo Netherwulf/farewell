@@ -4,10 +4,12 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Layout from './hoc/Layout/Layout';
+import Announcements from './components/Announcements/Announcements';
 import Funerals from './components/Funerals/Funerals';
-import Reservations from './components/Reservations/Reservations';
+import Graves from './components/Graves/Graves';
+import MyReservations from './components/MyReservations/MyReservations';
 import Reserve from './components/Reserve/Reserve';
-import Landing from './components/Landing/Landing';
+import ReserveGrave from './components/ReserveGrave/ReserveGrave';
 import Login from './components/Login/Login';
 import Register from './components/Register/Register';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
@@ -21,8 +23,7 @@ class App extends React.Component {
       <Switch>
         <Route path='/login' component={Login} />
         <Route path='/register' component={Register} />
-        <Route path='/funerals' component={Funerals} />
-        <Route path='/reservations' component={Reservations} />
+        <Route path='/' component={Announcements} />
         <Redirect to='/login' />
       </Switch>
     );
@@ -30,11 +31,12 @@ class App extends React.Component {
     const authenticatedRoutes = (
       <Switch>
         <Route path='/funerals' component={Funerals} />
-        <Route path='/reservations' component={Reservations} />
-        <Route path='/reserve' component={Reserve} />
-        <Route path='/my-reservations' component={Reservations} />
-        <Route path='/logout' component={Landing} />
-        <Route path='/' exact component={Landing} />
+        <Route path='/graves' component={Graves} />
+        <Route path='/reserve-funeral' component={Reserve} />
+        <Route path='/reserve-grave' component={ReserveGrave} />
+        <Route path='/my-reservations' component={MyReservations} />
+        <Route path='/logout' component={Announcements} />
+        <Route path='/' exact component={Announcements} />
         <Redirect to='/' />
       </Switch>
     );
