@@ -4,8 +4,9 @@ import analytical_module.api.v1.model.FactDTO;
 import analytical_module.api.v1.model.FactListDTO;
 import analytical_module.services.FactService;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
@@ -42,7 +43,7 @@ public class FactController {
         return factService.getFuneralReport();
     }
 
-    @GetMapping("/graveReport")
+    @GetMapping(value="/graveReport", produces=MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity getGraveReport() {
         return factService.getGraveReport();
     }
