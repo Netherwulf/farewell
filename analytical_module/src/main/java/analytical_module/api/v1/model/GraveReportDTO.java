@@ -3,7 +3,10 @@ package analytical_module.api.v1.model;
 import lombok.*;
 
 import javax.xml.bind.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.Map;
 
 @Data
@@ -53,8 +56,9 @@ public class GraveReportDTO {
     private Long modeGravesPerYear;
 
     // number of deceased per Grave - HashMap
+//    @JacksonXmlElementWrapper(useWrapping = false)
     @XmlElement
-    private Map<String, Long> deceasedPerGrave;
+    private ArrayList<Long> deceasedPerGrave;
 
     // average number of deceased per Grave
     @XmlElement
@@ -69,8 +73,9 @@ public class GraveReportDTO {
     private Long modeDeceasedPerGrave;
 
     // number of graves per User - HashMap
+//    @JacksonXmlElementWrapper(useWrapping = false)
     @XmlElement
-    private Map<String, Long> gravesPerUser;
+    private ArrayList<Long> gravesPerUser;
 
     // average number of graves per User
     @XmlElement
@@ -83,4 +88,5 @@ public class GraveReportDTO {
     // mode of number of graves per User
     @XmlElement
     private Long modeGravesPerUser;
+
 }

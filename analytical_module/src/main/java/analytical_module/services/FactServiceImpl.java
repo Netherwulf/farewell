@@ -641,7 +641,7 @@ public class FactServiceImpl implements FactService {
     }
 
     @Override
-    public ResponseEntity getGraveReport() {
+    public GraveReportDTO getGraveReport() {
         GraveReportDTO graveReportDTO = new GraveReportDTO();
 
         // average time between reservation and purchase in days
@@ -776,7 +776,7 @@ public class FactServiceImpl implements FactService {
         // number of deceased per Grave - HashMap
         HashMap<String, Long> deceasedPerGrave = getDeceasedPerGrave();
 
-        graveReportDTO.setDeceasedPerGrave(deceasedPerGrave);
+        graveReportDTO.setDeceasedPerGrave(new ArrayList<Long>(deceasedPerGrave.values()));
 
         // average number of deceased per Grave
         Double averageDeceasedPerGrave = getAverage(deceasedPerGrave);
@@ -796,7 +796,7 @@ public class FactServiceImpl implements FactService {
         // number of graves per User - HashMap
         HashMap<String, Long> gravesPerUser = getGravesPerUser();
 
-        graveReportDTO.setGravesPerUser(gravesPerUser);
+        graveReportDTO.setGravesPerUser(new ArrayList<Long>(gravesPerUser.values()));
 
         // average number of graves per User
         Double averageGravesPerUser = getAverage(gravesPerUser);
@@ -813,6 +813,6 @@ public class FactServiceImpl implements FactService {
 
         graveReportDTO.setModeGravesPerUser(modeGravesPerUser);
 
-        return ResponseEntity.status(HttpStatus.OK).body(graveReportDTO);
+        return graveReportDTO;
     }
 }

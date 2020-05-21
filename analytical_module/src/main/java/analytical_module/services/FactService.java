@@ -2,6 +2,7 @@ package analytical_module.services;
 
 import analytical_module.api.v1.model.FactDTO;
 import analytical_module.api.v1.model.FactListDTO;
+import analytical_module.api.v1.model.GraveReportDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
@@ -18,5 +19,5 @@ public interface FactService {
 
     ResponseEntity getFuneralReport();
 
-    ResponseEntity getGraveReport();
+    GraveReportDTO getGraveReport();
 }
