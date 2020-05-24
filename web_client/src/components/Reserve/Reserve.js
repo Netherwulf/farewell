@@ -2,8 +2,12 @@ import React, { Component } from 'react';
 import styles from './Reserve.module.scss';
 import DatePicker from 'react-datepicker';
 import * as RestClient from 'api/REST/RestClient';
+import { connect } from 'react-redux';
 import "react-datepicker/dist/react-datepicker.css";
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
 import Typography from '@material-ui/core/Typography';
+import moment from 'moment';
 
 const min = new Date().setHours(8);
 const max = new Date().setHours(18);
@@ -19,7 +23,19 @@ class Reserve extends Component {
             dateId: new Date().getFullYear() + "" + new Date().getMonth() + "" + new Date().getDay(),
             dates: []
         }],
-        currentExcludedTimes: []
+        availableFuneralDirectors: [],
+        religions: [],
+        selectedReligion: null,
+        graves: [],
+        gravesData: [],
+        currentExcludedTimes: [],
+        dateBirth: null,
+        dateDeath: null,
+        loaded: false,
+        errorOpen: false,
+        errorMessage: "",
+        successOpen: false,
+        successMessage: ""
     };
      
     handleChange = date => {
@@ -27,12 +43,86 @@ class Reserve extends Component {
         const excludedDate = this.state.excludedDates.find(element => element.dateId === dateId);
         this.setState({
             date: date,
-            currentExcludedTimes: excludedDate ? excludedDate.dates : []
+            currentExcludedTimes: excludedDate ? excludedDate.dates : [],
         });
     };
 
     componentDidMount() {
         this.getExcludedDates();
+        this.getFuneralDirectors();
+        this.getGraves();
+    }
+
+    handleSubmit = (event) => {
+        event.preventDefault();
+        const now = new Date();
+        const funeral = {
+            funeralDirectorId: event.target.elements.funeralDirector.value,
+            reservationDate: moment(now).local().format('YYYY-MM-DD hh:mm:ss-00'),
+            date: moment(this.state.date).local().format('YYYY-MM-DD hh:mm:ss-00'),
+            userId: this.props.userId
+        };
+        const deceased = {
+            surname: event.target.elements.firstName.value,
+            name: event.target.elements.lastName.value,
+            dateOfBirth: event.target.elements.birthDate.value,
+            dateOfDeath: event.target.elements.deathDate.value,
+            placeOfBirth: event.target.elements.birthPlace.value,
+            placeOfDeath: event.target.elements.deathPlace.value,
+        };
+        const grave = this.state.gravesData.find(grave => grave.graveNumber ==  event.target.elements.grave.value);
+        delete grave.id;
+        if (deceased.surname && deceased.name && deceased.dateOfBirth && deceased.dateOfDeath && deceased.placeOfBirth && deceased.placeOfDeath)
+            grave.deceased = [deceased];
+        else
+            return;
+        funeral.grave = grave;
+        this.postFuneral(funeral);
+    }
+
+    postFuneral = async (funeral) => {
+        const postResult = await RestClient.postFuneral(funeral);
+        if (!postResult) {
+            this.setState({ errorOpen: true, errorMessage: "No response from server" });
+        }
+        else if (postResult.message) {
+            this.setState({ errorOpen: true, errorMessage: postResult.message });
+        }
+        else {
+            this.setState({ successMessage: "Reservation completed, proceed to payment", successOpen: true });
+        }
+    }
+
+    getGraves = async () => {
+        const graves = await RestClient.getGravesForUser(this.props.userId);
+        const gravesData = await RestClient.getCemeteryGraves();
+        if (graves && gravesData) {
+            const availableGraves = graves.filter(grave => Number(grave.capacity) > grave.deceased.length);
+            if (availableGraves.length)
+                this.setState({ graves: availableGraves, gravesData: gravesData, loaded: true });
+        }
+    }
+
+    getFuneralDirectors = async () => {
+        const funeralDirectors = await RestClient.getFuneralDirectors();
+        if (funeralDirectors) {
+            const religions = [...new Set(funeralDirectors.map(item => item.religion))];
+            this.setState({ availableFuneralDirectors: funeralDirectors, religions: religions, selectedReligion: religions.length ? religions[0] : null });
+        }
+    }
+
+    onChangeReligion = (event) => {
+        if (event.target)
+            this.setState({ selectedReligion: event.target.value });
+    }
+
+    handleClose = (event, reason) => {
+        if (this.state.errorOpen)
+            this.setState({ errorOpen: false });
+        else {
+            this.setState({ successOpen: false },
+            this.props.history.push("/my-reservations"));
+        }
     }
 
     getExcludedDates = async () => {
@@ -55,6 +145,18 @@ class Reserve extends Component {
         }
     }
 
+    handleChange1 = date => {
+        this.setState({
+            dateBirth: date
+        });
+    };
+
+    handleChange2 = date => {
+        this.setState({
+            dateDeath: date
+        });
+    }
+
     render() {
         const ExampleCustomInput = ({ value, onClick }) => (
             <div className="form-group" onClick={onClick}>
@@ -62,9 +164,33 @@ class Reserve extends Component {
                     <input type="text" id="date" required className="form-control" value={value} />
             </div>
         );
+        const CustomInput1 = ({ value, onClick }) => (
+            <div className="form-group" >
+                    <label>Date of birth</label>
+                    <input onClick={onClick} required type="text" id="birthDate" className="form-control" value={value} />
+            </div>
+        );
+        const CustomInput2 = ({ value, onClick }) => (
+            <div className="form-group" >
+                    <label>Date of death</label>
+                    <input onClick={onClick} required type="text" id="deathDate" className="form-control" value={value} />
+            </div>
+        );
         return (
+            this.state.loaded ? <>
             <div className={styles.container}>
+                <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'right' }} open={this.state.successOpen} autoHideDuration={1000} onClose={this.handleClose}>
+                    <Alert onClose={this.handleClose} severity="success">
+                        {this.state.successMessage}
+                    </Alert>
+                </Snackbar>
+                <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'right' }} open={this.state.errorOpen} autoHideDuration={3000} onClose={this.handleClose}>
+                    <Alert onClose={this.handleClose} severity="error">
+                        {this.state.errorMessage}
+                    </Alert>
+                </Snackbar>
                 <div className={styles.reserve}>
+                <form onSubmit={this.handleSubmit}>
                     <Typography variant="h5" component="h2">Make a reservation</Typography>
                     <div className={styles.formItem}>
                         <DatePicker
@@ -84,26 +210,85 @@ class Reserve extends Component {
                         />
                     </div>
                     <div className="form-group">
-                        <label>Funeral director</label>
-                        <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <label class="input-group-text" for="inputGroupSelect01"></label>
+                        <label>Grave { this.state.graves && !this.state.graves.length ? <span className={styles.info}>*</span> : <></> }</label>
+                        { this.state.graves && !this.state.graves.length ? <div className={styles.info}>No graves available, reserve one first</div> : <></> }
+                        <div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                        <label className="input-group-text"></label>
                         </div>
-                        <select class="custom-select" id="inputGroupSelect01">
-                            <option selected>Available on this date</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                        <select disabled={this.state.graves.length ? false : true} className="custom-select" id="grave">
+                            {this.state.graves.map(grave => <option value={grave.graveNumber} key={grave.graveNumber}>Grave number {grave.graveNumber} </option>)}
+                        </select>
+                        </div>
+                    </div>
+                    <div className="form-group">
+                            <label>First name</label>
+                            <input required className="form-control" id="firstName" type="text"></input>
+                        </div>
+                        <div className="form-group">
+                            <label>Last name</label>
+                            <input required className="form-control" id="lastName" type="text"></input>
+                        </div>
+                        <div className="form-group">
+                            <label>Place of birth</label>
+                            <input required className="form-control" id="birthPlace" type="text"></input>
+                        </div>
+                        <DatePicker
+                                selected={this.state.dateBirth}
+                                onChange={this.handleChange1}
+                                dateFormat="yyyy-MM-dd"
+                                showYearDropdown
+                                maxDate={today}
+                                inLine
+                                customInput={<CustomInput1 />}
+                            />
+                        <div className="form-group">
+                            <label>Place of death</label>
+                            <input required className="form-control" id="deathPlace" type="text"></input>
+                        </div>
+                        <DatePicker
+                                selected={this.state.dateDeath}
+                                onChange={this.handleChange2}
+                                dateFormat="yyyy-MM-dd"
+                                showYearDropdown
+                                maxDate={today}
+                                inLine
+                                customInput={<CustomInput2 />}
+                   />
+                    <div className="form-group">
+                        <label>Religion</label>
+                        <div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                            <label className="input-group-text"></label>
+                        </div>
+                        <select required onChange={this.onChangeReligion} value={this.state.selectedReligion} className="custom-select" id="religion">
+                        {this.state.religions.map(r => <option value={r} key={r}>{r}</option>)}
+                        </select>
+                        </div>
+                    </div>
+                    <div className="form-group">
+                        <label>Funeral director</label>
+                        <div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                            <label className="input-group-text"></label>
+                        </div>
+                        <select required disabled={this.state.availableFuneralDirectors.filter(fd => fd.religion === this.state.selectedReligion).length ? false : true} className="custom-select" id="funeralDirector">
+                        {this.state.availableFuneralDirectors.filter(fd => fd.religion === this.state.selectedReligion).map(fd => <option value={fd.id} key={fd.id}>{fd.name} {fd.surname}</option>)}
                         </select>
                         </div>
                     </div>
                     <div className={styles.buttonArea}>
                         <button type="submit" className="btn btn-dark btn-block">Confirm</button>
-                    </div>     
+                    </div>
+                    </form>
                 </div>
-            </div>
+            </div></> : <></>
         )
     }
 }
 
-export default Reserve;
+const mapStateToProps = state => ({
+    userId: state.auth.userId
+});
+
+export default connect(mapStateToProps, undefined)(Reserve);
