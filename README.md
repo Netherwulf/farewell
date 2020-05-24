@@ -8,6 +8,7 @@ Distributed system supporting cemetery management made in microservices architec
 * Hibernate
 * PostgreSQL
 * RabbitMQ
+* XSLT
 * ReactJS
 
 ## Database
