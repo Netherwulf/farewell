@@ -55,7 +55,9 @@ class Funerals extends Component {
                 </div>
                 <div className={styles.buttonArea}>
                     <button type="submit" onClick={(this.toReserve)} className="btn btn-dark btn-block">Make a reservation</button>
-                </div>     
+                </div>   
+             <div id="fb-root"></div>
+                <script async defer crossorigin="anonymous" src="https://connect.facebook.net/pl_PL/sdk.js#xfbml=1&version=v7.0&appId=613587162699043&autoLogAppEvents=1"></script>
             </div>
         )
     }
