@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styles from './Reports.module.scss';
 import { withRouter } from 'react-router-dom';
+import * as RestClient from 'api/REST/RestClient';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import { VictoryChart, VictoryBar, VictoryGroup, VictoryHistogram, VictoryLegend, VictoryTooltip, VictoryLabel, VictoryAxis, VictoryPie } from 'victory';
@@ -19,35 +20,43 @@ class Reports extends Component {
         time: 0
     }
 
+    getFuneralReport = async () => {
+        const funeralDirectors = await RestClient.getFuneralDirectors();
+        const funeralData = await RestClient.getFuneralReport();
+        if (funeralDirectors && funeralData) {
+            const funeralsPerFuneralDirector = Object.keys(funeralData.funeralsPerFuneralDirector).map((i) => { 
+                return { x: i, y: funeralData.funeralsPerFuneralDirector[i] }});
+            const funeralsPerUser = Object.keys(funeralData.funeralsPerUser).map((i) => { 
+                return { x: funeralData.funeralsPerUser[i] }});
+            const funeralsDaily = [
+                { x: "average", y: funeralData.averageFuneralsPerDay },
+                { x: "median", y: funeralData.medianFuneralsPerDay },
+                { x: "mode", y: funeralData.modeFuneralsPerDay }
+            ];
+            const funeralsMonthly = [
+                { x: "average", y: funeralData.averageFuneralsPerMonth },
+                { x: "median", y: funeralData.medianFuneralsPerMonth },
+                { x: "mode", y: funeralData.modeFuneralsPerMonth }
+            ];
+            const funeralsYearly = [
+                { x: "average", y: funeralData.averageFuneralsPerYear },
+                { x: "median", y: funeralData.medianFuneralsPerYear },
+                { x: "mode", y: funeralData.modeFuneralsPerYear }
+            ];
+            this.setState({ 
+                funeralsPerFuneralDirectorData: funeralsPerFuneralDirector,
+                funeralDirectors: funeralDirectors,
+                funeralsPerUserData: funeralsPerUser,
+                funeralsDaily: funeralsDaily,
+                funeralsMonthly: funeralsMonthly,
+                funeralsYearly: funeralsYearly,
+                time: funeralData.averageReservationToPurchaseTime
+            });
+        }
+    }
+
     componentDidMount() {
-        const funeralData = {"averageReservationToPurchaseTime":30.409,"averageFuneralsPerDay":1.196,"medianFuneralsPerDay":1.0,"modeFuneralsPerDay":1,"averageFuneralsPerMonth":36.281,"medianFuneralsPerMonth":37.0,"modeFuneralsPerMonth":37,"averageFuneralsPerYear":290.25,"medianFuneralsPerYear":296.0,"modeFuneralsPerYear":306,"funeralsPerFuneralDirector":{"22":41,"23":32,"24":43,"25":30,"26":24,"27":26,"28":37,"29":15,"10":18,"11":38,"12":45,"13":49,"14":52,"15":18,"16":48,"17":48,"18":51,"19":22,"1":27,"2":48,"3":24,"4":33,"5":23,"6":42,"7":29,"8":21,"9":20,"20":27,"21":36},"averageFuneralsPerFuneralDirector":33.345,"medianFuneralsPerFuneralDirector":32.0,"modeFuneralsPerFuneralDirector":48,"funeralsPerUser":{"88":12,"89":15,"110":8,"111":9,"112":11,"113":7,"114":6,"115":8,"116":8,"90":14,"117":8,"118":10,"91":13,"92":16,"119":8,"93":15,"94":25,"95":11,"96":13,"97":16,"98":16,"99":16,"120":7,"121":5,"122":8,"123":6,"124":4,"125":5,"126":8,"127":3,"128":3,"129":4,"130":8,"131":8,"132":5,"133":1,"134":2,"135":4,"136":2,"137":3,"138":4,"139":4,"141":2,"142":5,"143":1,"144":4,"145":4,"147":2,"148":1,"40":11,"41":16,"42":13,"43":10,"44":13,"45":11,"46":11,"47":12,"48":14,"49":20,"150":2,"152":1,"156":1,"157":1,"50":9,"51":16,"52":10,"53":20,"54":7,"55":11,"56":16,"57":13,"58":11,"59":13,"60":15,"61":18,"62":11,"63":18,"64":13,"65":17,"66":16,"67":13,"68":15,"69":11,"70":22,"71":9,"72":15,"73":5,"74":12,"75":19,"76":7,"77":15,"78":13,"79":12,"100":12,"101":8,"102":16,"103":11,"104":9,"105":14,"106":8,"80":15,"107":13,"108":10,"81":16,"109":7,"82":13,"83":11,"84":21,"85":18,"86":30,"87":13},"averageFuneralsPerUser":10.459,"medianFuneralsPerUser":11.0,"modeFuneralsPerUser":13};
-        const funeralsPerFuneralDirector = Object.keys(funeralData.funeralsPerFuneralDirector).map((i) => { 
-            return { x: i, y: funeralData.funeralsPerFuneralDirector[i] }});
-        const funeralsPerUser = Object.keys(funeralData.funeralsPerUser).map((i) => { 
-            return { x: funeralData.funeralsPerUser[i] }});
-        const funeralsDaily = [
-            { x: "average", y: funeralData.averageFuneralsPerDay },
-            { x: "median", y: funeralData.medianFuneralsPerDay },
-            { x: "mode", y: funeralData.modeFuneralsPerDay }
-        ];
-        const funeralsMonthly = [
-            { x: "average", y: funeralData.averageFuneralsPerMonth },
-            { x: "median", y: funeralData.medianFuneralsPerMonth },
-            { x: "mode", y: funeralData.modeFuneralsPerMonth }
-        ];
-        const funeralsYearly = [
-            { x: "average", y: funeralData.averageFuneralsPerYear },
-            { x: "median", y: funeralData.medianFuneralsPerYear },
-            { x: "mode", y: funeralData.modeFuneralsPerYear }
-        ];
-        this.setState({ 
-            funeralsPerFuneralDirectorData: funeralsPerFuneralDirector, 
-            funeralsPerUserData: funeralsPerUser,
-            funeralsDaily: funeralsDaily,
-            funeralsMonthly: funeralsMonthly,
-            funeralsYearly: funeralsYearly,
-            time: funeralData.averageReservationToPurchaseTime
-        });
+        this.getFuneralReport();
     }
 
     render() {
@@ -248,10 +257,9 @@ class Reports extends Component {
                         <VictoryChart domainPadding={{ x: 10 }} height={300} width={800} >
                         <VictoryBar
                             data={this.state.funeralsPerFuneralDirectorData}
-                            /*labels={
-                                ({ datum }) => `${this.state.funeralDirectors.find(funeralDirector => funeralDirector.id == datum.x).name} ${this.state.funeralDirectors.find(funeralDirector => funeralDirector.id == datum.x).surname}`
-                            }*/
-                            labels={({ datum }) => datum.y}
+                            labels={
+                                ({ datum }) => `${this.state.funeralDirectors.find(funeralDirector => funeralDirector.id === datum.x).name} ${this.state.funeralDirectors.find(funeralDirector => funeralDirector.id === datum.x).surname}`
+                            }
                             labelComponent={<VictoryTooltip/>}
                         />
                         </VictoryChart>

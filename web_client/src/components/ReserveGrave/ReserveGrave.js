@@ -35,7 +35,7 @@ class ReserveGrave extends Component {
             placeOfBirth: event.target.elements.birthPlace.value,
             placeOfDeath: event.target.elements.deathPlace.value,
         };*/
-        const grave = this.state.graves.find(grave => grave.graveNumber ==  event.target.elements.grave.value);
+        const grave = this.state.graves.find(grave => grave.graveNumber ===  event.target.elements.grave.value);
         /*if (deceased.surname && deceased.name && deceased.dateOfBirth && deceased.dateOfDeath && deceased.placeOfBirth && deceased.placeOfDeath)
             grave.deceased.push(deceased);*/
         const now = new Date();
