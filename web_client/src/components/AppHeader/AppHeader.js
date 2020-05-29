@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import * as actions from '../../store/actions/actionsIndex';
 
 function AppHeader(props) {
-  console.log(props);
   return (
     <div className={styles.header}>
       <div className={styles.tabGroup}>
@@ -27,7 +26,7 @@ function AppHeader(props) {
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated,
-  isEmployee: state.auth.isEmployee
+  isEmployee: true
 });
 
 const mapDispatchToProps = dispatch => ({
