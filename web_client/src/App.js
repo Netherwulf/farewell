@@ -14,6 +14,7 @@ import Login from './components/Login/Login';
 import Register from './components/Register/Register';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import * as actions from './store/actions/actionsIndex';
+import Reports from './components/Reports/Reports';
 
 class App extends React.Component {
 
@@ -35,11 +36,26 @@ class App extends React.Component {
         <Route path='/reserve-funeral' component={Reserve} />
         <Route path='/reserve-grave' component={ReserveGrave} />
         <Route path='/my-reservations' component={MyReservations} />
+        <Route path='/reports' component={Reports} />
         <Route path='/logout' component={Announcements} />
         <Route path='/' exact component={Announcements} />
         <Redirect to='/' />
       </Switch>
     );
+    
+    const employeeRoutes = (
+      <Switch>
+        <Route path='/funerals' component={Funerals} />
+        <Route path='/graves' component={Graves} />
+        <Route path='/reserve-funeral' component={Reserve} />
+        <Route path='/reserve-grave' component={ReserveGrave} />
+        <Route path='/my-reservations' component={MyReservations} />
+        <Route path='/logout' component={Announcements} />
+        <Route path='/' exact component={Announcements} />
+        <Redirect to='/' />
+      </Switch>
+    );
+    
     return (
       <CssBaseline>
         <Layout>

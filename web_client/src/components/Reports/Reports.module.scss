@@ -1,0 +1,25 @@
+.container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.chartSection {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.sectionSummary {
+    display: flex;
+    flex-direction: column;
+    font-size: medium;
+    align-self: flex-end;
+    padding-bottom: 30px;
+    padding-right: 30px;
+}
+
+.buttonArea {
+    padding: 20px;
+}
