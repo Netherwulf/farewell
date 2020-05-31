@@ -11,6 +11,7 @@
     "moment-timezone": "^0.5.31",
     "node-sass": "^4.14.1",
     "react": "^16.13.1",
+    "react-anchor-link-smooth-scroll": "^1.0.12",
     "react-big-calendar": "^0.24.6",
     "react-datepicker": "^2.15.0",
     "react-dom": "^16.13.1",
@@ -21,7 +22,9 @@
     "redux": "^4.0.5",
     "redux-persist": "^6.0.0",
     "typescript": "^3.8.3",
-    "xml-js": "^1.6.11"
+    "victory": "^34.3.8",
+    "xml-js": "^1.6.11",
+    "xml2js": "^0.4.23"
   },
   "scripts": {
     "start": "react-scripts start",

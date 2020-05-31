@@ -8,6 +8,12 @@ export const postUser = async (userObject) => {
     return response;
 }
 
+export const getFuneralReport = async () => {
+  const url = `http://${analyticalURL}/funeralReport`;
+  const response = await get(url);
+  return response;
+}
+
 export const getFuneralDirectors = async () => {
     const url = `http://${analyticalURL}/funeralDirectors`;
     const response = await get(url);

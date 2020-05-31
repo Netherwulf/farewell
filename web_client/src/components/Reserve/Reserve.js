@@ -70,7 +70,7 @@ class Reserve extends Component {
             placeOfBirth: event.target.elements.birthPlace.value,
             placeOfDeath: event.target.elements.deathPlace.value,
         };
-        const grave = this.state.gravesData.find(grave => grave.graveNumber ==  event.target.elements.grave.value);
+        const grave = this.state.gravesData.find(grave => grave.graveNumber ===  event.target.elements.grave.value);
         delete grave.id;
         if (deceased.surname && deceased.name && deceased.dateOfBirth && deceased.dateOfDeath && deceased.placeOfBirth && deceased.placeOfDeath)
             grave.deceased = [deceased];
