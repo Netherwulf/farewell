@@ -4,7 +4,7 @@
         version="3.0"
 >
 
-    <xsl:output method="html" indent="yes" media-type="text/html" encoding="UTF-8" />
+    <xsl:output method="xml" indent="yes" media-type="text/html" encoding="UTF-8"/>
     <xsl:template match="/">
         <html>
             <head>
