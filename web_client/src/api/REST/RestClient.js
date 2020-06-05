@@ -2,15 +2,64 @@ import axios from 'axios';
 import * as util from 'api/REST/utility';
 import { authURL, reservationURL, analyticalURL } from 'common/const';
 
+var html2json = require('html2json').html2json;
+
 export const postUser = async (userObject) => {
     const url = `http://${authURL}/register`;
     const response = await post(url, userObject);
     return response;
 }
 
+const getValueFromDiv = (body, name) => {
+  const z = body.filter(obj => obj.attr).filter(obj => obj.attr.name === name)[0].child.filter(obj => obj.tag === "p")[0].child[0].text;
+  return z;
+}
+
+export const getGraveReport = async () => {
+  const url = `http://${analyticalURL}/graveReport`;
+  const response = await getHTML(url);
+  //console.log(response);
+  const jsonObj = html2json(response);
+  const body = jsonObj.child[0].child[3].child;
+  //console.log(body);
+  const lst = body.filter(obj => obj.attr).filter(obj => obj.attr.name === "gravesPerUser")[0].child;
+  const ul = lst.filter(obj => obj.tag === "ul")[0].child;
+  const li = ul.filter(obj => obj.tag === "li");
+  const arrGravesPerUser = li.map(object=>Number(object.child[0].text));
+  //console.log(arrGravesPerUser);
+  const lstz = body.filter(obj => obj.attr).filter(obj => obj.attr.name === "deceasedPerGrave")[0].child;
+  const ulz = lstz.filter(obj => obj.tag === "ul")[0].child;
+  const liz = ulz.filter(obj => obj.tag === "li");
+  const arrDeceasedPerGrave = liz.map(object=>Number(object.child[0].text));
+  //console.log(arrDeceasedPerGrave);
+  const report = { 
+    averageReservationToPurchaseTime: getValueFromDiv(body, "averageReservationToPurchaseTime"), 
+    averageGravesPerDay: getValueFromDiv(body, "averageGravesPerDay"), 
+    medianGravesPerDay: getValueFromDiv(body, "medianGravesPerDay"), 
+    modeGravesPerDay: getValueFromDiv(body, "modeGravesPerDay"), 
+    averageGravesPerMonth: getValueFromDiv(body, "averageGravesPerMonth"), 
+    medianGravesPerMonth: getValueFromDiv(body, "medianGravesPerMonth"), 
+    modeGravesPerMonth: getValueFromDiv(body, "modeGravesPerMonth"), 
+    averageGravesPerYear: getValueFromDiv(body, "averageGravesPerYear"), 
+    medianGravesPerYear: getValueFromDiv(body, "medianGravesPerYear"), 
+    modeGravesPerYear: getValueFromDiv(body, "modeGravesPerYear"), 
+    averageDeceasedPerGrave: getValueFromDiv(body, "averageDeceasedPerGrave"), 
+    medianDeceasedPerGrave: getValueFromDiv(body, "medianDeceasedPerGrave"), 
+    modeDeceasedPerGrave: getValueFromDiv(body, "modeDeceasedPerGrave"), 
+    averageGravesPerUser: getValueFromDiv(body, "averageGravesPerUser"), 
+    medianGravesPerUser: getValueFromDiv(body, "medianGravesPerUser"), 
+    modeGravesPerUser: getValueFromDiv(body, "modeGravesPerUser"), 
+    gravesPerUser: arrGravesPerUser,
+    deceasedPerGrave: arrDeceasedPerGrave,
+  };
+  console.log(report);
+  return response;
+}
+
 export const getFuneralReport = async () => {
   const url = `http://${analyticalURL}/funeralReport`;
   const response = await get(url);
+  console.log(response);
   return response;
 }
 
@@ -159,6 +208,19 @@ export const get = async (url) => {
             console.log('ERROR: ', error.response);
             return error.response ? error.response.data : null;
         });
+}
+
+export const getHTML = async (url) => {
+  const config = { headers: [] };
+  config.headers["Content-Type"] = 'text/html';
+  return await axios.get(url, config)
+      .then(response => {
+          return response.data;
+      })
+      .catch(error => {
+          console.log('ERROR: ', error.response);
+          return error.response ? error.response.data : null;
+      });
 }
 
 export const getAuthenticated = async (url, authToken) => {

@@ -20,7 +20,7 @@ class Reports extends Component {
         time: 0
     }
 
-    getFuneralReport = async () => {
+    getFuneralReportBack = async () => {
         const funeralDirectors = await RestClient.getFuneralDirectors();
         const funeralData = await RestClient.getFuneralReport();
         if (funeralDirectors && funeralData) {
@@ -55,12 +55,47 @@ class Reports extends Component {
         }
     }
 
+    getFuneralReport = async () => {
+        const graveData = await RestClient.getGraveReport();
+        const funeralData = await RestClient.getFuneralReport();
+        if (funeralData) {
+            const funeralsPerFuneralDirector = Object.keys(funeralData.funeralsPerFuneralDirector).map((i) => { 
+                return { x: i, y: funeralData.funeralsPerFuneralDirector[i] }});
+            const funeralsPerUser = Object.keys(funeralData.funeralsPerUser).map((i) => { 
+                return { x: funeralData.funeralsPerUser[i] }});
+            const funeralsDaily = [
+                { x: "average", y: funeralData.averageFuneralsPerDay },
+                { x: "median", y: funeralData.medianFuneralsPerDay },
+                { x: "mode", y: funeralData.modeFuneralsPerDay }
+            ];
+            const funeralsMonthly = [
+                { x: "average", y: funeralData.averageFuneralsPerMonth },
+                { x: "median", y: funeralData.medianFuneralsPerMonth },
+                { x: "mode", y: funeralData.modeFuneralsPerMonth }
+            ];
+            const funeralsYearly = [
+                { x: "average", y: funeralData.averageFuneralsPerYear },
+                { x: "median", y: funeralData.medianFuneralsPerYear },
+                { x: "mode", y: funeralData.modeFuneralsPerYear }
+            ];
+            this.setState({ 
+                funeralsPerFuneralDirectorData: funeralsPerFuneralDirector,
+                funeralDirectors: [],
+                funeralsPerUserData: funeralsPerUser,
+                funeralsDaily: funeralsDaily,
+                funeralsMonthly: funeralsMonthly,
+                funeralsYearly: funeralsYearly,
+                time: funeralData.averageReservationToPurchaseTime
+            });
+        }
+    }
+
     componentDidMount() {
         this.getFuneralReport();
     }
 
     render() {
-        console.log(this.state.funeralsPerUserData);
+        //console.log(this.state.funeralsPerUserData);
         return (
             <div className={styles.container}>
                 <div id="users" className={styles.sectionTitle}><span className><AnchorLink href='#users'>User statistics</AnchorLink></span></div>
@@ -258,7 +293,8 @@ class Reports extends Component {
                         <VictoryBar
                             data={this.state.funeralsPerFuneralDirectorData}
                             labels={
-                                ({ datum }) => `${this.state.funeralDirectors.find(funeralDirector => funeralDirector.id === datum.x).name} ${this.state.funeralDirectors.find(funeralDirector => funeralDirector.id === datum.x).surname}`
+                                //({ datum }) => `${this.state.funeralDirectors.find(funeralDirector => funeralDirector.id === datum.x).name} ${this.state.funeralDirectors.find(funeralDirector => funeralDirector.id === datum.x).surname}`
+                                ({ datum }) => datum.x
                             }
                             labelComponent={<VictoryTooltip/>}
                         />
