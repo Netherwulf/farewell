@@ -14,9 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
 public class FuneralDirectorListDTO {
-    @XmlElement
     List<FuneralDirectorDTO> funeralDirectors;
 }

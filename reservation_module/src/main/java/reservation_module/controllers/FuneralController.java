@@ -2,6 +2,7 @@ package reservation_module.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import reservation_module.api.v1.model.FuneralDTO;
@@ -26,7 +27,7 @@ public class FuneralController {
         this.rabbitMQSender = rabbitMQSender;
     }
 
-    @GetMapping("/funerals")
+    @GetMapping(value="/funerals", produces=MediaType.APPLICATION_XML_VALUE)
     public FuneralListDTO getAllFunerals() {
         return funeralService.getAllFunerals();
     }

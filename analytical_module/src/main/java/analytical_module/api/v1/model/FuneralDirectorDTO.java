@@ -13,21 +13,13 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
 public class FuneralDirectorDTO {
-    @XmlElement
     private Long id;
 
-    @XmlElement
     private String surname;
-    @XmlElement
     private String name;
-    @XmlElement
     private String dateOfBirth;
-    @XmlElement
     private String religion;
-    @XmlElement
     private String email;
 
 //    private Set<FactDTO> facts = new HashSet<>();
