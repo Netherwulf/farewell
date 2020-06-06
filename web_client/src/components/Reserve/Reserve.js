@@ -96,10 +96,18 @@ class Reserve extends Component {
     getGraves = async () => {
         const graves = await RestClient.getGravesForUser(this.props.userId);
         const gravesData = await RestClient.getCemeteryGraves();
+        console.log(graves);
         if (graves && gravesData) {
             const availableGraves = graves.filter(grave => Number(grave.capacity) > grave.deceased.length);
             if (availableGraves.length)
                 this.setState({ graves: availableGraves, gravesData: gravesData, loaded: true });
+            else {
+                console.log("err");
+                this.setState({ errorOpen: true, errorMessage: "No graves reserved, you must reserve a grave first." });
+            }
+        } else {
+            console.log("err2");
+            this.setState({ errorOpen: true, errorMessage: "No graves reserved, you must reserve a grave first." });
         }
     }
 

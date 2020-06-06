@@ -29,7 +29,7 @@ class Reports extends Component {
         deceasedPerGraveData: []
     }
 
-    getFuneralReportBack = async () => {
+    getFuneralReport = async () => {
         const funeralDirectors = await RestClient.getFuneralDirectors();
         const funeralData = await RestClient.getFuneralReport();
         if (funeralDirectors && funeralData) {
@@ -64,7 +64,7 @@ class Reports extends Component {
         }
     }
 
-    getFuneralReport = async () => {
+    getFuneralReport2 = async () => {
         const graveData = await RestClient.getGraveReport();
         const funeralData = await RestClient.getFuneralReport();
         if (funeralData) {
@@ -101,8 +101,6 @@ class Reports extends Component {
 
     getGraveReport = async () => {
         const graveData = await RestClient.getGraveReport();
-
-        console.log(graveData);
 
         if (graveData) {
 
@@ -321,14 +319,23 @@ class Reports extends Component {
                     <div className={styles.chartSectionExtra}>
                         <Typography variant="h6">Funerals per funeral director</Typography>
                         <VictoryChart domainPadding={{ x: 10 }} height={300} width={800} >
+                        {
+                            this.state.funeralDirectors.length ?
                         <VictoryBar
                             data={this.state.funeralsPerFuneralDirectorData}
                             labels={
-                                //({ datum }) => `${this.state.funeralDirectors.find(funeralDirector => funeralDirector.id === datum.x).name} ${this.state.funeralDirectors.find(funeralDirector => funeralDirector.id === datum.x).surname}`
+                                ({ datum }) => `${this.state.funeralDirectors.find(funeralDirector => funeralDirector.id === datum.x).name} ${this.state.funeralDirectors.find(funeralDirector => funeralDirector.id === datum.x).surname}`
+                            }
+                            labelComponent={<VictoryTooltip/>}
+                        /> :
+                        <VictoryBar
+                            data={this.state.funeralsPerFuneralDirectorData}
+                            labels={
                                 ({ datum }) => datum.x
                             }
                             labelComponent={<VictoryTooltip/>}
-                        />
+                        /> 
+                        }
                         </VictoryChart>
                     </div>
                 </Grid>

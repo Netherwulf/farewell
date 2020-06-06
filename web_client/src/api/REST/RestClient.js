@@ -3,6 +3,7 @@ import * as util from 'api/REST/utility';
 import { authURL, reservationURL, analyticalURL } from 'common/const';
 
 var html2json = require('html2json').html2json;
+var convert = require('xml-js');
 
 export const postUser = async (userObject) => {
     const url = `http://${authURL}/register`;
@@ -17,9 +18,9 @@ const getValueFromDiv = (body, name) => {
 
 export const getGraveReport = async () => {
   const url = `http://${analyticalURL}/graveReport`;
-  const response = await getHTML(url);
-  //console.log(response);
-  const jsonObj = html2json(response);
+  const response = await get(url, 'text/html');
+  const html = response.substring(response.indexOf("<html>"));
+  const jsonObj = html2json(html);
   const body = jsonObj.child[0].child[3].child;
   //console.log(body);
   const lst = body.filter(obj => obj.attr).filter(obj => obj.attr.name === "gravesPerUser")[0].child;
@@ -65,8 +66,24 @@ export const getFuneralReport = async () => {
 
 export const getFuneralDirectors = async () => {
     const url = `http://${analyticalURL}/funeralDirectors`;
-    const response = await get(url);
-    return response ? response.funeralDirectors : [];
+    const response = await get(url, 'application/xml');
+    const json = convert.xml2json(response, {compact: true, spaces: 4});
+    const jsonObj = JSON.parse(json);
+    const dto = jsonObj.FuneralDirectorListDTO;
+    const funeralDirectorsData = dto.funeralDirectors.funeralDirectors;
+    const funeralDirectors = [];
+    funeralDirectorsData.forEach(element => {
+      const funeralDirector = { 
+        dateOfBirth: element.dateOfBirth._text,
+        email: element.email._text,
+        id: element.id._text,
+        name: element.name._text,
+        surname: element.surname._text,
+        religion: element.religion._text,
+      };
+      funeralDirectors.push(funeralDirector);
+    });
+    return funeralDirectors.length ? funeralDirectors : [];
 }
 
 export const getFunerals = async () => {
@@ -197,9 +214,11 @@ export const post = async (url, object) => {
         });
 }
 
-export const get = async (url) => {
+export const get = async (url, contentType) => {
     const config = { headers: [] };
     config.headers["Content-Type"] = 'application/json';
+    if (contentType)
+      config.headers["Content-Type"] = contentType;
     return await axios.get(url, config)
         .then(response => {
             return response.data;
@@ -208,19 +227,6 @@ export const get = async (url) => {
             console.log('ERROR: ', error.response);
             return error.response ? error.response.data : null;
         });
-}
-
-export const getHTML = async (url) => {
-  const config = { headers: [] };
-  config.headers["Content-Type"] = 'text/html';
-  return await axios.get(url, config)
-      .then(response => {
-          return response.data;
-      })
-      .catch(error => {
-          console.log('ERROR: ', error.response);
-          return error.response ? error.response.data : null;
-      });
 }
 
 export const getAuthenticated = async (url, authToken) => {
