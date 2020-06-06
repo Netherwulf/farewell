@@ -11,8 +11,8 @@ export const postUser = async (userObject) => {
 }
 
 const getValueFromDiv = (body, name) => {
-  const z = body.filter(obj => obj.attr).filter(obj => obj.attr.name === name)[0].child.filter(obj => obj.tag === "p")[0].child[0].text;
-  return z;
+  const value = body.filter(obj => obj.attr).filter(obj => obj.attr.name === name)[0].child.filter(obj => obj.tag === "p")[0].child[0].text;
+  return Number(value);
 }
 
 export const getGraveReport = async () => {
@@ -52,14 +52,14 @@ export const getGraveReport = async () => {
     gravesPerUser: arrGravesPerUser,
     deceasedPerGrave: arrDeceasedPerGrave,
   };
-  console.log(report);
-  return response;
+  //console.log(report);
+  return report;
 }
 
 export const getFuneralReport = async () => {
   const url = `http://${analyticalURL}/funeralReport`;
   const response = await get(url);
-  console.log(response);
+  //console.log(response);
   return response;
 }
 
