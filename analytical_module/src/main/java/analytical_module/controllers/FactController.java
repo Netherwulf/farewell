@@ -52,7 +52,7 @@ public class FactController {
         return factService.createNewFact(factDTO);
     }
 
-    @GetMapping("/funeralReport")
+    @GetMapping(value="/funeralReport")
     public ResponseEntity getFuneralReport() {
         return factService.getFuneralReport();
     }

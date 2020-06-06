@@ -47,11 +47,11 @@ public class FuneralDirectorServiceImpl implements FuneralDirectorService {
                 .map(funeralDirector -> {
                     FuneralDirectorDTO funeralDirectorDTO = funeralDirectorMapper.funeralDirectorToFuneralDirectorDTO(funeralDirector);
 
-                    if (!Objects.equals(funeralDirectorDTO.getFacts(), new HashSet<>())) {
-                        for (FactDTO factDTO: funeralDirectorDTO.getFacts()) {
-                            factDTO.setFuneralDirectorId(funeralDirectorDTO.getId());
-                        }
-                    }
+//                    if (!Objects.equals(funeralDirectorDTO.getFacts(), new HashSet<>())) {
+//                        for (FactDTO factDTO: funeralDirectorDTO.getFacts()) {
+//                            factDTO.setFuneralDirectorId(funeralDirectorDTO.getId());
+//                        }
+//                    }
 
                     return funeralDirectorDTO;
                 })
@@ -72,11 +72,11 @@ public class FuneralDirectorServiceImpl implements FuneralDirectorService {
 
         FuneralDirectorDTO funeralDirectorDTO = funeralDirectorMapper.funeralDirectorToFuneralDirectorDTO(funeralDirector);
 
-        if (!Objects.equals(funeralDirectorDTO.getFacts(), new HashSet<>())) {
-            for (FactDTO factDTO: funeralDirectorDTO.getFacts()) {
-                factDTO.setFuneralDirectorId(funeralDirectorId);
-            }
-        }
+//        if (!Objects.equals(funeralDirectorDTO.getFacts(), new HashSet<>())) {
+//            for (FactDTO factDTO: funeralDirectorDTO.getFacts()) {
+//                factDTO.setFuneralDirectorId(funeralDirectorId);
+//            }
+//        }
 
         return ResponseEntity.status(HttpStatus.OK).body(funeralDirectorDTO);
     }
@@ -99,11 +99,11 @@ public class FuneralDirectorServiceImpl implements FuneralDirectorService {
 
         FuneralDirectorDTO funeralDirectorDTO = funeralDirectorMapper.funeralDirectorToFuneralDirectorDTO(funeralDirector);
 
-        if (!Objects.equals(funeralDirectorDTO.getFacts(), new HashSet<>())) {
-            for (FactDTO factDTO: funeralDirectorDTO.getFacts()) {
-                factDTO.setFuneralDirectorId(funeralDirectorDTO.getId());
-            }
-        }
+//        if (!Objects.equals(funeralDirectorDTO.getFacts(), new HashSet<>())) {
+//            for (FactDTO factDTO: funeralDirectorDTO.getFacts()) {
+//                factDTO.setFuneralDirectorId(funeralDirectorDTO.getId());
+//            }
+//        }
 
         return ResponseEntity.status(HttpStatus.OK).body(funeralDirectorDTO);
     }
@@ -133,11 +133,11 @@ public class FuneralDirectorServiceImpl implements FuneralDirectorService {
 
         FuneralDirectorDTO returnDTO = funeralDirectorMapper.funeralDirectorToFuneralDirectorDTO(savedFuneralDirector);
 
-        if (!Objects.equals(returnDTO.getFacts(), new HashSet<>())) {
-            for (FactDTO factDTO: returnDTO.getFacts()) {
-                factDTO.setFuneralDirectorId(returnDTO.getId());
-            }
-        }
+//        if (!Objects.equals(returnDTO.getFacts(), new HashSet<>())) {
+//            for (FactDTO factDTO: returnDTO.getFacts()) {
+//                factDTO.setFuneralDirectorId(returnDTO.getId());
+//            }
+//        }
 
         return ResponseEntity.status(HttpStatus.OK).body(returnDTO);
     }

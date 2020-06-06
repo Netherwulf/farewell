@@ -4,8 +4,9 @@ import analytical_module.api.v1.model.FuneralDirectorDTO;
 import analytical_module.api.v1.model.FuneralDirectorListDTO;
 import analytical_module.services.FuneralDirectorService;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
@@ -17,7 +18,7 @@ public class FuneralDirectorController {
         this.funeralDirectorService = funeralDirectorService;
     }
 
-    @GetMapping("/funeralDirectors")
+    @GetMapping(value="/funeralDirectors", produces=MediaType.APPLICATION_XML_VALUE)
     FuneralDirectorListDTO getAllFuneralDirectors() {
         return funeralDirectorService.getAllFuneralDirectors();
     }
