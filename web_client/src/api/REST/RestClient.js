@@ -255,6 +255,22 @@ export const getFuneralsJSON = async () => {
         },
         userId: '27',
         grave: null
+      },
+      {
+        id: 4,
+        reservationDate: '2019-10-12 14:11:29-00',
+        date: '2019-10-15 14:10:00-00',
+        funeralDirectorId: '4',
+        funeralDirector: {
+          id: 3,
+          surname: 'Marecki',
+          name: 'Paweł',
+          dateOfBirth: '1971-02-10',
+          religion: 'islam',
+          email: 'sławomiro2.pl'
+        },
+        userId: '44',
+        grave: null
       }
     ]
   };
@@ -287,6 +303,13 @@ export const postFuneral = async (object) => {
 
 export const getCemeteryGraves = async () => {
     const mockupData = [
+        {
+          graveNumber: '100000',
+          coordinates: '27-11-13.0-N 3-25-8.7-W',
+          capacity: '7',
+          userId: null,
+          deceased: []
+        },
         {
           graveNumber: '99996',
           coordinates: '41-24-12.2-N 2-10-26.5-E',
@@ -363,6 +386,69 @@ export const getCemeteryGraves = async () => {
           graveNumber: '99994',
           coordinates: '30-21-11.1-N 3-42-12.4-W',
           capacity: '1',
+          userId: null,
+          deceased: []
+        },
+        {
+          graveNumber: '99993',
+          coordinates: '30-21-11.1-N 3-42-9.4-W',
+          capacity: '1',
+          userId: null,
+          deceased: []
+        },
+        {
+          graveNumber: '99992',
+          coordinates: '30-21-11.1-N 3-42-8.4-W',
+          capacity: '1',
+          userId: null,
+          deceased: []
+        },
+        {
+          graveNumber: '99991',
+          coordinates: '30-21-11.1-N 3-42-6.4-W',
+          capacity: '3',
+          userId: null,
+          deceased: []
+        },
+        {
+          graveNumber: '99990',
+          coordinates: '30-21-11.1-N 3-42-3.4-W',
+          capacity: '2',
+          userId: null,
+          deceased: []
+        },
+        {
+          graveNumber: '97921',
+          coordinates: '18-11-08.1-N 3-41-3.4-W',
+          capacity: '6',
+          userId: null,
+          deceased: []
+        },
+        {
+          graveNumber: '96890',
+          coordinates: '10-07-17.1-N 3-71-28.4-W',
+          capacity: '5',
+          userId: null,
+          deceased: []
+        },
+        {
+          graveNumber: '91820',
+          coordinates: '18-07-17.1-N 3-71-48.4-W',
+          capacity: '3',
+          userId: null,
+          deceased: []
+        },
+        {
+          graveNumber: '90210',
+          coordinates: '12-07-18.1-N 3-71-38.4-W',
+          capacity: '11',
+          userId: null,
+          deceased: []
+        },
+        {
+          graveNumber: '90211',
+          coordinates: '10-07-18.1-N 3-71-38.3-W',
+          capacity: '2',
           userId: null,
           deceased: []
         }
