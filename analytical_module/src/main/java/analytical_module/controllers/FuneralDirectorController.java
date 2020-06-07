@@ -18,7 +18,7 @@ public class FuneralDirectorController {
         this.funeralDirectorService = funeralDirectorService;
     }
 
-    @GetMapping(value="/funeralDirectors", produces=MediaType.APPLICATION_XML_VALUE)
+    @GetMapping(value="/funeralDirectors")
     FuneralDirectorListDTO getAllFuneralDirectors() {
         return funeralDirectorService.getAllFuneralDirectors();
     }

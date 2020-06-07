@@ -71,7 +71,15 @@ public class FuneralServiceImpl implements FuneralService {
                         }
                     }
                     if (funeralDTO.getFuneralDirectorId() != null) {
-                        funeralDTO.setFuneralDirector(result.getFuneralDirectors().get(Integer.parseInt(funeralDTO.getFuneralDirectorId())));
+                        Optional<FuneralDirectorDTO> funeralDirectorDTOOptional = result.getFuneralDirectors()
+                                .stream()
+                                .filter(funeralDirectorDTO -> funeralDirectorDTO.getId() == Integer.parseInt(funeralDTO.getFuneralDirectorId()))
+                                .findFirst();
+
+                        if (funeralDirectorDTOOptional.isPresent()) {
+                            funeralDTO.setFuneralDirector(funeralDirectorDTOOptional.get());
+                        }
+//                        funeralDTO.setFuneralDirector(result.getFuneralDirectors().get(Integer.parseInt(funeralDTO.getFuneralDirectorId())));
                     }
                     return funeralDTO;
                 })
