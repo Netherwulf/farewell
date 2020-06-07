@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import "react-datepicker/dist/react-datepicker.css";
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
+import { withRouter, Link } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import moment from 'moment';
 
@@ -13,7 +14,11 @@ const min = new Date().setHours(8);
 const max = new Date().setHours(18);
 const today = new Date();
 const tomorrow = new Date(today);
-tomorrow.setDate(tomorrow.getDate() + 1);
+tomorrow.setDate(tomorrow.getDate() + 2);
+tomorrow.setHours(9);
+tomorrow.setMinutes(0);
+tomorrow.setSeconds(0);
+tomorrow.setMilliseconds(0);
 
 class Reserve extends Component {
 
@@ -63,8 +68,8 @@ class Reserve extends Component {
             userId: this.props.userId
         };
         const deceased = {
-            surname: event.target.elements.firstName.value,
-            name: event.target.elements.lastName.value,
+            surname: event.target.elements.lastName.value,
+            name: event.target.elements.firstName.value,
             dateOfBirth: event.target.elements.birthDate.value,
             dateOfDeath: event.target.elements.deathDate.value,
             placeOfBirth: event.target.elements.birthPlace.value,
@@ -100,6 +105,8 @@ class Reserve extends Component {
             const availableGraves = graves.filter(grave => Number(grave.capacity) > grave.deceased.length);
             if (availableGraves.length)
                 this.setState({ graves: availableGraves, gravesData: gravesData, loaded: true });
+        } else {
+            this.setState({ noGraves: "No graves reserved, you must reserve a grave first." });
         }
     }
 
@@ -141,7 +148,9 @@ class Reserve extends Component {
                     excludedDates.push({ dateId: dateId, dates: [date]})
                 }
             });
-            this.setState({excludedDates: excludedDates});
+            const dateId = tomorrow.getFullYear() + "" + tomorrow.getMonth() + "" + tomorrow.getDay();
+            const excludedDate = excludedDates.find(element => element.dateId === dateId);
+            this.setState({excludedDates: excludedDates, currentExcludedTimes: excludedDate ? excludedDate.dates : [], loadedAll: true});
         }
     }
 
@@ -155,10 +164,10 @@ class Reserve extends Component {
         this.setState({
             dateDeath: date
         });
-    }
+    };
 
     render() {
-        const ExampleCustomInput = ({ value, onClick }) => (
+        const CustomInput = ({ value, onClick }) => (
             <div className="form-group" onClick={onClick}>
                     <label>Date</label>
                     <input type="text" id="date" required className="form-control" value={value} />
@@ -177,7 +186,7 @@ class Reserve extends Component {
             </div>
         );
         return (
-            this.state.loaded ? <>
+            (this.state.loaded && this.state.loadedAll) ? <>
             <div className={styles.container}>
                 <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'right' }} open={this.state.successOpen} autoHideDuration={1000} onClose={this.handleClose}>
                     <Alert onClose={this.handleClose} severity="success">
@@ -196,6 +205,7 @@ class Reserve extends Component {
                         <DatePicker
                             selected={this.state.date}
                             onChange={this.handleChange}
+                            required
                             showTimeSelect
                             timeFormat="HH:mm"
                             timeIntervals={60}
@@ -206,7 +216,7 @@ class Reserve extends Component {
                             minDate={tomorrow}
                             inLine
                             excludeTimes={this.state.currentExcludedTimes}
-                            customInput={<ExampleCustomInput />}
+                            customInput={<CustomInput />}
                         />
                     </div>
                     <div className="form-group">
@@ -282,7 +292,9 @@ class Reserve extends Component {
                     </div>
                     </form>
                 </div>
-            </div></> : <></>
+            </div></> : <div className={styles.container}>
+                        {this.state.noGraves ? <div>No graves reserved, <Link to="/graves">reserve a grave</Link> first.</div> : <></>}
+                    </div>
         )
     }
 }
@@ -291,4 +303,4 @@ const mapStateToProps = state => ({
     userId: state.auth.userId
 });
 
-export default connect(mapStateToProps, undefined)(Reserve);
+export default withRouter(connect(mapStateToProps, undefined)(Reserve));

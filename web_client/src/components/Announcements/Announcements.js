@@ -19,7 +19,7 @@ class Announcements extends Component {
     getFunerals = async () => {
         const funerals = await RestClient.getFunerals();
         if (funerals) {
-            const sortedFunerals = funerals.sort((d1, d2) => moment(d1.date).diff(d2.date, 'minutes'));
+            const sortedFunerals = funerals.sort((d2, d1) => moment(d1.date).diff(d2.date, 'minutes'));
             this.setState({ funerals: sortedFunerals });
         }
     }
@@ -33,7 +33,7 @@ class Announcements extends Component {
                     justify="center"
                     alignItems="center"
                 >
-                { this.state.funerals.filter(funeral => funeral.grave && funeral.grave.deceased).map(funeral => <FuneralCard key={funeral.id} {...funeral} />) }
+                { this.state.funerals.filter(funeral => funeral.grave && funeral.grave.deceased && funeral.grave.deceased.length).map(funeral => <FuneralCard key={funeral.id} {...funeral} />) }
                </Grid>
             </div>
         )

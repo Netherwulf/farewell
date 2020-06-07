@@ -111,7 +111,7 @@ class FuneralCard extends Component {
             </Snackbar>
             <CardContent>
                 <Typography className={styles.title} color="textSecondary" gutterBottom>
-                { moment(this.props.date).format('MMMM Do YYYY, HH:mm') }
+                { moment(this.props.date).format('MMMM Do YYYY') }
                 </Typography>
                 <Typography variant="h5" component="h2">
                 { deceased.name } { deceased.surname }
@@ -130,8 +130,14 @@ class FuneralCard extends Component {
             </CardActions>
             <Collapse in={this.state.open} timeout="auto" unmountOnExit>
             <CardContent>
-            <Typography>
-                Funeral director: {this.props.funeralDirectorId}
+            <Typography color="textSecondary">
+                Funeral director: {this.props.funeralDirector.name} {this.props.funeralDirector.surname}
+            </Typography>
+            <Typography color="textSecondary">
+                Day: { moment(this.props.date).format('MMMM Do YYYY') }
+            </Typography>
+            <Typography color="textSecondary">
+                Time: { moment(this.props.date).format('HH:mm') }
             </Typography>
             <div className={styles.googleCalendarArea}>
                 <button type="submit" className="btn btn-info btn-block" onClick={this.addToGoogleCalendar}>Add to Google Calendar</button>

@@ -17,7 +17,16 @@ class Reports extends Component {
         funeralsDaily: [],
         funeralsMonthly: [],
         funeralsYearly: [],
-        time: 0
+        time: 0,
+        gravesDaily: [],
+        gravesMonthly: [],
+        gravesYearly: [],
+        deceasedPerGrave: [],
+        gravesTime: 0,
+        deceasedPerGrave: [],
+        gravesPerUser: [],
+        gravesPerUserData: [],
+        deceasedPerGraveData: []
     }
 
     getFuneralReport = async () => {
@@ -43,6 +52,27 @@ class Reports extends Component {
                 { x: "median", y: funeralData.medianFuneralsPerYear },
                 { x: "mode", y: funeralData.modeFuneralsPerYear }
             ];
+
+            const funeralDirectorsPerReligion = [];
+
+            const religions = [...new Set(funeralDirectors.map(item => item.religion))];
+            religions.forEach(religion => {
+                const fds = funeralDirectors.filter(fd => fd.religion === religion)
+                funeralDirectorsPerReligion.push({ religion: religion, funeralDirectors: fds});
+            });
+
+            const funeralsPerReligion = [];
+            funeralDirectorsPerReligion.forEach(religion => {
+                let funeralSum = 0;
+                religion.funeralDirectors.forEach(fd => {
+                    const id = Number(fd.id);
+                    const number = funeralData.funeralsPerFuneralDirector[id];
+                    if (!isNaN(number))
+                        funeralSum += number;
+                });
+                funeralsPerReligion.push({ x: religion.religion, y: funeralSum });
+            });
+
             this.setState({ 
                 funeralsPerFuneralDirectorData: funeralsPerFuneralDirector,
                 funeralDirectors: funeralDirectors,
@@ -50,20 +80,114 @@ class Reports extends Component {
                 funeralsDaily: funeralsDaily,
                 funeralsMonthly: funeralsMonthly,
                 funeralsYearly: funeralsYearly,
+                time: funeralData.averageReservationToPurchaseTime,
+                funeralsPerReligionData: funeralsPerReligion
+            });
+        }
+    }
+
+    /*getFuneralReport2 = async () => {
+        const graveData = await RestClient.getGraveReport();
+        const funeralData = await RestClient.getFuneralReport();
+        if (funeralData) {
+            const funeralsPerFuneralDirector = Object.keys(funeralData.funeralsPerFuneralDirector).map((i) => { 
+                return { x: i, y: funeralData.funeralsPerFuneralDirector[i] }});
+            const funeralsPerUser = Object.keys(funeralData.funeralsPerUser).map((i) => { 
+                return { x: funeralData.funeralsPerUser[i] }});
+            const funeralsDaily = [
+                { x: "average", y: funeralData.averageFuneralsPerDay },
+                { x: "median", y: funeralData.medianFuneralsPerDay },
+                { x: "mode", y: funeralData.modeFuneralsPerDay }
+            ];
+            const funeralsMonthly = [
+                { x: "average", y: funeralData.averageFuneralsPerMonth },
+                { x: "median", y: funeralData.medianFuneralsPerMonth },
+                { x: "mode", y: funeralData.modeFuneralsPerMonth }
+            ];
+            const funeralsYearly = [
+                { x: "average", y: funeralData.averageFuneralsPerYear },
+                { x: "median", y: funeralData.medianFuneralsPerYear },
+                { x: "mode", y: funeralData.modeFuneralsPerYear }
+            ];
+            this.setState({ 
+                funeralsPerFuneralDirectorData: funeralsPerFuneralDirector,
+                funeralDirectors: [],
+                funeralsPerUserData: funeralsPerUser,
+                funeralsDaily: funeralsDaily,
+                funeralsMonthly: funeralsMonthly,
+                funeralsYearly: funeralsYearly,
                 time: funeralData.averageReservationToPurchaseTime
+            });
+        }
+    }*/
+
+    getGraveReport = async () => {
+        const graveData = await RestClient.getGraveReport();
+
+        if (graveData) {
+
+            const gravesPerUserData = graveData.gravesPerUser.map((i) => { 
+                return { x: i }});
+
+            const deceasedPerGraveData = graveData.deceasedPerGrave.map((i) => {
+                return { x: i }});
+
+            const gravesDaily = [
+                { x: "average", y: graveData.averageGravesPerDay },
+                { x: "median", y: graveData.medianFGravesPerDay },
+                { x: "mode", y: graveData.modeGravesPerDay }
+            ];
+            const gravesMonthly = [
+                { x: "average", y: graveData.averageGravesPerMonth },
+                { x: "median", y: graveData.medianGravesPerMonth },
+                { x: "mode", y: graveData.modeGravesPerMonth }
+            ];
+            const gravesYearly = [
+                { x: "average", y: graveData.averageGravesPerYear },
+                { x: "median", y: graveData.medianGravesPerYear },
+                { x: "mode", y: graveData.modeGravesPerYear }
+            ];
+
+            const deceasedPerGrave = [
+                { x: "average", y: graveData.averageDeceasedPerGrave  },
+                { x: "median", y: graveData.medianDeceasedPerGrave },
+                { x: "mode", y: graveData.modeDeceasedPerGrave }
+            ];
+            const gravesPerUser = [
+                { x: "average", y: graveData.averageGravesPerUser },
+                { x: "median", y: graveData.medianGravesPerUser },
+                { x: "mode", y: graveData.modeGravesPerUser }
+            ];
+
+            this.setState({ 
+                gravesDaily: gravesDaily,
+                gravesMonthly: gravesMonthly,
+                gravesYearly: gravesYearly,
+                gravesTime: graveData.averageReservationToPurchaseTime,
+                deceasedPerGrave: deceasedPerGrave,
+                gravesPerUser: gravesPerUser,
+                gravesPerUserData: gravesPerUserData,
+                deceasedPerGraveData: deceasedPerGraveData.filter(obj => obj.x < 30)
             });
         }
     }
 
     componentDidMount() {
         this.getFuneralReport();
+        this.getGraveReport();
+    }
+
+    getTimeString(value) {
+        var time = value * 60;
+        var minutes = Math.floor(time / 60);
+        var seconds = Math.floor(time - minutes * 60);
+        return `${minutes} mins ${seconds} s`
     }
 
     render() {
-        console.log(this.state.funeralsPerUserData);
         return (
             <div className={styles.container}>
-                <div id="users" className={styles.sectionTitle}><span className><AnchorLink href='#users'>User statistics</AnchorLink></span></div>
+                <div id="users" className={styles.sectionTitle}><span><AnchorLink href='#users'>User statistics</AnchorLink></span></div>
                 <Grid
                     container
                     direction="row"
@@ -75,21 +199,8 @@ class Reports extends Component {
                         <VictoryChart>
                         <VictoryHistogram
                             style={{ data: { fill: "#5D001E", stroke: "white" }}}
-                            bins={[0,1,2,3,4,5,6,7,8,9,10]}
-                            data={[
-                            { x: 0 },
-                            { x: 1 },
-                            { x: 1 },
-                            { x: 1 },
-                            { x: 1 },
-                            { x: 2 },
-                            { x: 2 },
-                            { x: 3 },
-                            { x: 4 },
-                            { x: 7 },
-                            { x: 7 },
-                            { x: 10 }
-                            ]}
+                            bins={6}
+                            data={this.state.gravesPerUserData}
                         />
                         <VictoryAxis
                             tickLabelComponent={<VictoryLabel style={{textAnchor:'end', fontSize: '12px'}}/>}
@@ -122,24 +233,11 @@ class Reports extends Component {
                         <VictoryChart>
                         <VictoryHistogram
                             style={{ data: { fill: "tomato", stroke: "white" }}}
-                            bins={10}
-                            data={[
-                            { x: 0 },
-                            { x: 1 },
-                            { x: 1 },
-                            { x: 1 },
-                            { x: 1 },
-                            { x: 2 },
-                            { x: 2 },
-                            { x: 3 },
-                            { x: 4 },
-                            { x: 7 },
-                            { x: 7 },
-                            { x: 10 }
-                            ]}
+                            bins={15}
+                            data={this.state.deceasedPerGraveData}
                         />
                         <VictoryAxis
-                            tickValues={[0,1,2,3,4,5,6,7,8,9,10]}
+                            tickValues={[5,10,15,20,25,30]}
                             tickLabelComponent={<VictoryLabel style={{textAnchor:'end', fontSize: '12px'}}/>}
                         />
                         <VictoryAxis
@@ -183,7 +281,7 @@ class Reports extends Component {
                         <Typography variant="h6">Number of graves reserved</Typography>
                         <VictoryChart
                         padding={{ top: 40, bottom: 50, left: 70, right: 80 }}
-                        domain={{ y: [0.5, 4.5] }}
+                        domain={{ y: [0, 50] }}
                         >
                             <VictoryGroup horizontal
                             offset={15}
@@ -191,25 +289,13 @@ class Reports extends Component {
                             colorScale={["brown", "tomato", "gold"]}
                             >
                             <VictoryBar
-                                data={[
-                                { x: "daily", y: 1 },
-                                { x: "monthly", y: 2 },
-                                { x: "yearly", y: 3 },
-                                ]}
+                                data={this.state.gravesYearly}
                             />
                             <VictoryBar
-                                data={[
-                                { x: "daily", y: 2 },
-                                { x: "monthly", y: 3 },
-                                { x: "yearly", y: 4 },
-                                ]}
+                                data={this.state.gravesMonthly}
                             />
                             <VictoryBar
-                                data={[
-                                { x: "daily", y: 1 },
-                                { x: "monthly", y: 2 },
-                                { x: "yearly", y: 3 },
-                                ]}
+                                data={this.state.gravesDaily}
                             />
                         </VictoryGroup>
                         </VictoryChart>
@@ -237,11 +323,11 @@ class Reports extends Component {
                 >
                 <div className={styles.chartSection}>
                 <Typography variant="h6">Funeral reservation payment time</Typography>
-                    <div className={styles.box}><Typography variant="h5">{this.state.time.toFixed(0)} mins</Typography></div>
+                    <div className={styles.box}><Typography variant="h5">{this.getTimeString(this.state.time)}</Typography></div>
                 </div>
                 <div className={styles.chartSection}>
                 <Typography variant="h6">Grave reservation payment time</Typography>
-                    <div className={styles.box}><Typography variant="h5">{this.state.time.toFixed(0)} mins</Typography></div>
+                    <div className={styles.box}><Typography variant="h5">{this.getTimeString(this.state.gravesTime)}</Typography></div>
                 </div>
                 </Grid>
                 <div id="funeraldirectors" className={styles.sectionExtra}>
@@ -255,10 +341,42 @@ class Reports extends Component {
                     <div className={styles.chartSectionExtra}>
                         <Typography variant="h6">Funerals per funeral director</Typography>
                         <VictoryChart domainPadding={{ x: 10 }} height={300} width={800} >
+                        {
+                            this.state.funeralDirectors.length ?
                         <VictoryBar
                             data={this.state.funeralsPerFuneralDirectorData}
                             labels={
-                                ({ datum }) => `${this.state.funeralDirectors.find(funeralDirector => funeralDirector.id === datum.x).name} ${this.state.funeralDirectors.find(funeralDirector => funeralDirector.id === datum.x).surname}`
+                                ({ datum }) => {
+                                    const fd = this.state.funeralDirectors.find(funeralDirector => funeralDirector.id === Number(datum.x));
+                                    return fd ? `${fd.name} ${fd.surname}: ${datum.y}` : datum.x;
+                                }
+                            }
+                            labelComponent={<VictoryTooltip/>}
+                        /> :
+                        <VictoryBar
+                            data={this.state.funeralsPerFuneralDirectorData}
+                            labels={
+                                ({ datum }) => datum.x
+                            }
+                            labelComponent={<VictoryTooltip/>}
+                        /> 
+                        }
+                        </VictoryChart>
+                    </div>
+                </Grid>
+                <Grid
+                    container
+                    direction="row"
+                    justify="start"
+                >
+                    <div className={styles.chartSectionExtra}>
+                        <Typography variant="h6">Funerals per religion</Typography>
+                        <VictoryChart domainPadding={{ x: 30 }} domain={{ y: [0, 200] }} height={300} width={800} >
+                        <VictoryBar
+                            data={this.state.funeralsPerReligionData}
+                            style={{ data: { fill: "#c43a31" } }}
+                            labels={
+                                ({ datum }) => datum.y
                             }
                             labelComponent={<VictoryTooltip/>}
                         />

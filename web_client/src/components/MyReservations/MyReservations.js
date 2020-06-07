@@ -37,7 +37,7 @@ class MyReservations extends Component {
         if (funerals && myFunerals) {
             const funeralEvents = [];
             myFunerals.forEach(funeral => {
-                const dateStr = funeral.date.substring(0,funeral.date.length-3);
+                const dateStr = funeral.date;
                 const date = new Date(dateStr);
                 date.setMinutes(0);
                 date.setMilliseconds(0);
