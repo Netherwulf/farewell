@@ -14,7 +14,9 @@ const min = new Date().setHours(8);
 const max = new Date().setHours(18);
 const today = new Date();
 const tomorrow = new Date(today);
-tomorrow.setDate(tomorrow.getDate() + 1);
+tomorrow.setDate(tomorrow.getDate() + 2);
+tomorrow.setHours(9);
+tomorrow.setMinutes(0);
 
 class Reserve extends Component {
 
@@ -64,8 +66,8 @@ class Reserve extends Component {
             userId: this.props.userId
         };
         const deceased = {
-            surname: event.target.elements.firstName.value,
-            name: event.target.elements.lastName.value,
+            surname: event.target.elements.lastName.value,
+            name: event.target.elements.firstName.value,
             dateOfBirth: event.target.elements.birthDate.value,
             dateOfDeath: event.target.elements.deathDate.value,
             placeOfBirth: event.target.elements.birthPlace.value,

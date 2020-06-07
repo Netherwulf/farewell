@@ -27,9 +27,12 @@ class Funerals extends Component {
         if (funerals) {
             const funeralEvents = [];
             funerals.forEach(funeral => {
-                const date = new Date(funeral.date);
-                const endDate = new Date(funeral.date);
+                const d = funeral.date.substring(0,funeral.date.length - 3);
+                const date = new Date(d);
+                const endDate = new Date(d);
                 endDate.setHours(date.getHours() + 1);
+                console.log(date);
+                console.log(endDate);
                 const event = { id: funeral.id, title: "Reserved", start: date, end: endDate }
                 funeralEvents.push(event);
             });

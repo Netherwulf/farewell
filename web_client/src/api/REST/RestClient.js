@@ -64,7 +64,7 @@ export const getFuneralReport = async () => {
   return response;
 }
 
-export const getFuneralDirectors = async () => {
+/*export const getFuneralDirectors = async () => {
     const url = `http://${analyticalURL}/funeralDirectors`;
     const response = await get(url, 'application/xml');
     const json = convert.xml2json(response, {compact: true, spaces: 4});
@@ -84,11 +84,184 @@ export const getFuneralDirectors = async () => {
       funeralDirectors.push(funeralDirector);
     });
     return funeralDirectors.length ? funeralDirectors : [];
+}*/
+
+export const getFuneralDirectors = async () => {
+    const url = `http://${analyticalURL}/funeralDirectors`;
+    const response = await get(url);
+    return response ? response.funeralDirectors : [];
 }
 
 export const getFunerals = async () => {
   const url = `http://${reservationURL}/funerals`;
-  const response = await get(url);
+  const response = await get(url, 'application/xml');
+  const json = convert.xml2json(response, {compact: true, spaces: 4});
+  const jsonObj = JSON.parse(json);
+  const dto = jsonObj.funeralListDTO;
+  const funeralData = dto.funerals;
+  console.log(funeralData);
+  const funerals = [];
+
+  funeralData.forEach(element => {
+    const funeralDirector = element.funeralDirector ? {
+      dateOfBirth: element.funeralDirector.dateOfBirth._text,
+      email: element.funeralDirector.email._text,
+      id: element.funeralDirector.id._text,
+      name: element.funeralDirector.name._text,
+      surname: element.funeralDirector.surname._text,
+      religion: element.funeralDirector.religion._text,
+    } : null;
+    
+    const deceased = [];
+    if (element.grave && element.grave.deceased) {
+      const deceasedData = element.grave.deceased.length ? element.grave.deceased : [element.grave.deceased];
+      deceasedData.forEach(p => {
+        const person = {
+          dateOfBirth: p.dateOfBirth._text,
+          dateOfDeath: p.dateOfDeath._text,
+          id: Number(p.id._text),
+          name: p.name._text,
+          surname: p.surname._text,
+          graveId: Number(p.graveId._text),
+          placeOfBirth: p.placeOfBirth._text,
+          placeOfDeath: p.placeOfDeath._text
+        };
+        deceased.push(person);
+      });
+    }
+
+    const grave = element.grave ? {
+      id: Number(element.grave.id._text),
+      reservationDate: element.grave.reservationDate ? element.grave.reservationDate._text : "",
+      graveNumber: element.grave.graveNumber._text,
+      coordinates: element.grave.coordinates._text,
+      capacity: element.grave.capacity._text,
+      funeralId: Number(element.grave.funeralId._text),
+      userId: element.grave.userId ? Number(element.grave.userId._text) : "",
+      deceased: deceased
+    } : null;
+
+    const funeral = {
+      id: Number(element.id._text),
+      reservationDate: element.reservationDate._text,
+      date: element.date._text,
+      funeralDirectorId: element.funeralDirectorId._text,
+      funeralDirector: funeralDirector,
+      userId: element.userId._text,
+      grave: grave
+    };
+    funerals.push(funeral);
+  });
+
+  console.log(funerals);
+
+  return funerals;
+}
+
+export const getFuneralsJSON = async () => {
+  const url = `http://${reservationURL}/funerals`;
+  const response = {
+    funerals: [
+      {
+        id: 1,
+        reservationDate: '2012-05-03 22:15:10-00',
+        date: '2012-06-12 10:15:00-00',
+        funeralDirectorId: '1',
+        funeralDirector: {
+          id: 2,
+          surname: 'Nowak',
+          name: 'Jan',
+          dateOfBirth: '1970-02-11',
+          religion: 'protestantism',
+          email: 'jacek@pwr.com'
+        },
+        userId: '25',
+        grave: {
+          id: 1,
+          reservationDate: '2016-06-22 19:10:25-00',
+          graveNumber: '99996',
+          coordinates: '41-24-12.2-N 2-10-26.5-E',
+          capacity: '4',
+          funeralId: 1,
+          userId: 40,
+          deceased: [
+            {
+              id: 2,
+              surname: 'Nowak',
+              name: 'Rajmund',
+              dateOfBirth: '1982-12-30',
+              placeOfBirth: 'Nowa Sól',
+              dateOfDeath: '2001-01-02',
+              placeOfDeath: 'Wrocław',
+              graveId: 1
+            },
+            {
+              id: 1,
+              surname: 'Kowalski',
+              name: 'Jan',
+              dateOfBirth: '1970-05-03',
+              placeOfBirth: 'Warszawa',
+              dateOfDeath: '2012-01-30',
+              placeOfDeath: 'Gdynia',
+              graveId: 1
+            }
+          ]
+        }
+      },
+      {
+        id: 2,
+        reservationDate: '2007-07-17 23:22:31-00',
+        date: '2007-08-23 12:45:00-00',
+        funeralDirectorId: '1',
+        funeralDirector: {
+          id: 2,
+          surname: 'Nowak',
+          name: 'Jan',
+          dateOfBirth: '1970-02-11',
+          religion: 'protestantism',
+          email: 'jacek@pwr.com'
+        },
+        userId: '26',
+        grave: {
+          id: 2,
+          reservationDate: '2003-10-08 11:10:48-00',
+          graveNumber: '99997',
+          coordinates: '17-18-19.7-S 19-59-37.4-W',
+          capacity: '3',
+          funeralId: 2,
+          userId: 41,
+          deceased: [
+            {
+              id: 3,
+              surname: 'Bałkański',
+              name: 'Patryk',
+              dateOfBirth: '1988-09-13',
+              placeOfBirth: 'Dźwirzyno',
+              dateOfDeath: '2010-03-08',
+              placeOfDeath: 'Berlin',
+              graveId: 2
+            }
+          ]
+        }
+      },
+      {
+        id: 3,
+        reservationDate: '2014-05-13 17:29:39-00',
+        date: '2014-07-22 15:30:00-00',
+        funeralDirectorId: '2',
+        funeralDirector: {
+          id: 3,
+          surname: 'Marecki',
+          name: 'Paweł',
+          dateOfBirth: '1971-02-10',
+          religion: 'islam',
+          email: 'sławomiro2.pl'
+        },
+        userId: '27',
+        grave: null
+      }
+    ]
+  };
   return response ? response.funerals : [];
 }
 
@@ -217,8 +390,9 @@ export const post = async (url, object) => {
 export const get = async (url, contentType) => {
     const config = { headers: [] };
     config.headers["Content-Type"] = 'application/json';
-    if (contentType)
+    if (contentType) {
       config.headers["Content-Type"] = contentType;
+    }
     return await axios.get(url, config)
         .then(response => {
             return response.data;

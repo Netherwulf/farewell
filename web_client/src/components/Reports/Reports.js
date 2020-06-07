@@ -52,6 +52,30 @@ class Reports extends Component {
                 { x: "median", y: funeralData.medianFuneralsPerYear },
                 { x: "mode", y: funeralData.modeFuneralsPerYear }
             ];
+
+            const funeralDirectorsPerReligion = [];
+
+            const religions = [...new Set(funeralDirectors.map(item => item.religion))];
+            religions.forEach(religion => {
+                const fds = funeralDirectors.filter(fd => fd.religion === religion)
+                funeralDirectorsPerReligion.push({ religion: religion, funeralDirectors: fds});
+            });
+
+            const funeralsPerReligion = [];
+            funeralDirectorsPerReligion.forEach(religion => {
+                let funeralSum = 0;
+                console.log(religion);
+                religion.funeralDirectors.forEach(fd => {
+                    const id = Number(fd.id);
+                    const number = funeralData.funeralsPerFuneralDirector[id];
+                    console.log(number);
+                    if (!isNaN(number))
+                        funeralSum += number;
+                });
+                funeralsPerReligion.push({ x: religion.religion, y: funeralSum });
+            });
+            console.log(funeralsPerReligion);
+
             this.setState({ 
                 funeralsPerFuneralDirectorData: funeralsPerFuneralDirector,
                 funeralDirectors: funeralDirectors,
@@ -59,12 +83,13 @@ class Reports extends Component {
                 funeralsDaily: funeralsDaily,
                 funeralsMonthly: funeralsMonthly,
                 funeralsYearly: funeralsYearly,
-                time: funeralData.averageReservationToPurchaseTime
+                time: funeralData.averageReservationToPurchaseTime,
+                funeralsPerReligionData: funeralsPerReligion
             });
         }
     }
 
-    getFuneralReport2 = async () => {
+    /*getFuneralReport2 = async () => {
         const graveData = await RestClient.getGraveReport();
         const funeralData = await RestClient.getFuneralReport();
         if (funeralData) {
@@ -97,7 +122,7 @@ class Reports extends Component {
                 time: funeralData.averageReservationToPurchaseTime
             });
         }
-    }
+    }*/
 
     getGraveReport = async () => {
         const graveData = await RestClient.getGraveReport();
@@ -165,7 +190,7 @@ class Reports extends Component {
     render() {
         return (
             <div className={styles.container}>
-                <div id="users" className={styles.sectionTitle}><span className><AnchorLink href='#users'>User statistics</AnchorLink></span></div>
+                <div id="users" className={styles.sectionTitle}><span><AnchorLink href='#users'>User statistics</AnchorLink></span></div>
                 <Grid
                     container
                     direction="row"
@@ -324,7 +349,10 @@ class Reports extends Component {
                         <VictoryBar
                             data={this.state.funeralsPerFuneralDirectorData}
                             labels={
-                                ({ datum }) => `${this.state.funeralDirectors.find(funeralDirector => funeralDirector.id === datum.x).name} ${this.state.funeralDirectors.find(funeralDirector => funeralDirector.id === datum.x).surname}`
+                                ({ datum }) => {
+                                    const fd = this.state.funeralDirectors.find(funeralDirector => funeralDirector.id === Number(datum.x));
+                                    return fd ? `${fd.name} ${fd.surname}: ${datum.y}` : datum.x;
+                                }
                             }
                             labelComponent={<VictoryTooltip/>}
                         /> :
@@ -336,6 +364,25 @@ class Reports extends Component {
                             labelComponent={<VictoryTooltip/>}
                         /> 
                         }
+                        </VictoryChart>
+                    </div>
+                </Grid>
+                <Grid
+                    container
+                    direction="row"
+                    justify="start"
+                >
+                    <div className={styles.chartSectionExtra}>
+                        <Typography variant="h6">Funerals per religion</Typography>
+                        <VictoryChart domainPadding={{ x: 30 }} domain={{ y: [0, 200] }} height={300} width={800} >
+                        <VictoryBar
+                            data={this.state.funeralsPerReligionData}
+                            style={{ data: { fill: "#c43a31" } }}
+                            labels={
+                                ({ datum }) => datum.y
+                            }
+                            labelComponent={<VictoryTooltip/>}
+                        />
                         </VictoryChart>
                     </div>
                 </Grid>
