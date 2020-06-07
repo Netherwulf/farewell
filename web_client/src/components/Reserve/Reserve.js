@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import "react-datepicker/dist/react-datepicker.css";
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
+import { withRouter, Link } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import moment from 'moment';
 
@@ -96,18 +97,12 @@ class Reserve extends Component {
     getGraves = async () => {
         const graves = await RestClient.getGravesForUser(this.props.userId);
         const gravesData = await RestClient.getCemeteryGraves();
-        console.log(graves);
         if (graves && gravesData) {
             const availableGraves = graves.filter(grave => Number(grave.capacity) > grave.deceased.length);
             if (availableGraves.length)
                 this.setState({ graves: availableGraves, gravesData: gravesData, loaded: true });
-            else {
-                console.log("err");
-                this.setState({ errorOpen: true, errorMessage: "No graves reserved, you must reserve a grave first." });
-            }
         } else {
-            console.log("err2");
-            this.setState({ errorOpen: true, errorMessage: "No graves reserved, you must reserve a grave first." });
+            this.setState({ noGraves: "No graves reserved, you must reserve a grave first." });
         }
     }
 
@@ -166,7 +161,7 @@ class Reserve extends Component {
     }
 
     render() {
-        const ExampleCustomInput = ({ value, onClick }) => (
+        const CustomInput = ({ value, onClick }) => (
             <div className="form-group" onClick={onClick}>
                     <label>Date</label>
                     <input type="text" id="date" required className="form-control" value={value} />
@@ -214,7 +209,7 @@ class Reserve extends Component {
                             minDate={tomorrow}
                             inLine
                             excludeTimes={this.state.currentExcludedTimes}
-                            customInput={<ExampleCustomInput />}
+                            customInput={<CustomInput />}
                         />
                     </div>
                     <div className="form-group">
@@ -290,7 +285,9 @@ class Reserve extends Component {
                     </div>
                     </form>
                 </div>
-            </div></> : <></>
+            </div></> : <div className={styles.container}>
+                        {this.state.noGraves ? <div>No graves reserved, <Link to="/graves">reserve a grave</Link> first.</div> : <></>}
+                    </div>
         )
     }
 }
@@ -299,4 +296,4 @@ const mapStateToProps = state => ({
     userId: state.auth.userId
 });
 
-export default connect(mapStateToProps, undefined)(Reserve);
+export default withRouter(connect(mapStateToProps, undefined)(Reserve));
