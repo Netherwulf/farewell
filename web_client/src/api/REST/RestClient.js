@@ -99,7 +99,6 @@ export const getFunerals = async () => {
   const jsonObj = JSON.parse(json);
   const dto = jsonObj.funeralListDTO;
   const funeralData = dto.funerals;
-  console.log(funeralData);
   const funerals = [];
 
   funeralData.forEach(element => {
@@ -144,7 +143,7 @@ export const getFunerals = async () => {
     const funeral = {
       id: Number(element.id._text),
       reservationDate: element.reservationDate._text,
-      date: element.date._text,
+      date: element.date._text.substring(0,element.date._text.length-3),
       funeralDirectorId: element.funeralDirectorId._text,
       funeralDirector: funeralDirector,
       userId: element.userId._text,
@@ -152,9 +151,6 @@ export const getFunerals = async () => {
     };
     funerals.push(funeral);
   });
-
-  console.log(funerals);
-
   return funerals;
 }
 

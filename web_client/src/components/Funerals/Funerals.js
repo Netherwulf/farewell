@@ -31,8 +31,6 @@ class Funerals extends Component {
                 const date = new Date(d);
                 const endDate = new Date(d);
                 endDate.setHours(date.getHours() + 1);
-                console.log(date);
-                console.log(endDate);
                 const event = { id: funeral.id, title: "Reserved", start: date, end: endDate }
                 funeralEvents.push(event);
             });

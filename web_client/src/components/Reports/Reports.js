@@ -64,17 +64,14 @@ class Reports extends Component {
             const funeralsPerReligion = [];
             funeralDirectorsPerReligion.forEach(religion => {
                 let funeralSum = 0;
-                console.log(religion);
                 religion.funeralDirectors.forEach(fd => {
                     const id = Number(fd.id);
                     const number = funeralData.funeralsPerFuneralDirector[id];
-                    console.log(number);
                     if (!isNaN(number))
                         funeralSum += number;
                 });
                 funeralsPerReligion.push({ x: religion.religion, y: funeralSum });
             });
-            console.log(funeralsPerReligion);
 
             this.setState({ 
                 funeralsPerFuneralDirectorData: funeralsPerFuneralDirector,

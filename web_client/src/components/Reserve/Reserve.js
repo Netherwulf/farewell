@@ -17,6 +17,8 @@ const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 2);
 tomorrow.setHours(9);
 tomorrow.setMinutes(0);
+tomorrow.setSeconds(0);
+tomorrow.setMilliseconds(0);
 
 class Reserve extends Component {
 
@@ -146,7 +148,9 @@ class Reserve extends Component {
                     excludedDates.push({ dateId: dateId, dates: [date]})
                 }
             });
-            this.setState({excludedDates: excludedDates});
+            const dateId = tomorrow.getFullYear() + "" + tomorrow.getMonth() + "" + tomorrow.getDay();
+            const excludedDate = excludedDates.find(element => element.dateId === dateId);
+            this.setState({excludedDates: excludedDates, currentExcludedTimes: excludedDate ? excludedDate.dates : [], loadedAll: true});
         }
     }
 
@@ -160,7 +164,7 @@ class Reserve extends Component {
         this.setState({
             dateDeath: date
         });
-    }
+    };
 
     render() {
         const CustomInput = ({ value, onClick }) => (
@@ -182,7 +186,7 @@ class Reserve extends Component {
             </div>
         );
         return (
-            this.state.loaded ? <>
+            (this.state.loaded && this.state.loadedAll) ? <>
             <div className={styles.container}>
                 <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'right' }} open={this.state.successOpen} autoHideDuration={1000} onClose={this.handleClose}>
                     <Alert onClose={this.handleClose} severity="success">
@@ -201,6 +205,7 @@ class Reserve extends Component {
                         <DatePicker
                             selected={this.state.date}
                             onChange={this.handleChange}
+                            required
                             showTimeSelect
                             timeFormat="HH:mm"
                             timeIntervals={60}
