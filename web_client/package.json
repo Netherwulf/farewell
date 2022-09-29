@@ -23,7 +23,7 @@
     "redux": "^4.0.5",
     "redux-persist": "^6.0.0",
     "typescript": "^3.8.3",
-    "victory": "^34.3.8",
+    "victory": "^36.6.8",
     "xml-js": "^1.6.11",
     "xml2js": "^0.4.23"
   },
